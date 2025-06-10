@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
-const API_KEY = 'db1393edebdb0d8e7c902a57e7937428';
+
+const API_KEY = process.env.TMDB_API_KEY;
 
 type Genre = {
   id: number;
