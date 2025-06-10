@@ -273,7 +273,7 @@ export default function NetflixBrowser() {
         {selectedItems.length > 0 && (
   <div style={{ marginTop: '1rem' }}>
     <button onClick={pickRandomFromSelection}>
-      🎲 Sorpréndeme desde mi lista ({selectedItems.length} seleccionadas)
+      🎲 Seleccionar aleatoriamente ({selectedItems.length} seleccionadas)
     </button>
   </div>
 )}
