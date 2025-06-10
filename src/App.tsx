@@ -1,5 +1,5 @@
 import './App.css'
-import MovieList from './components/MovieList'
+import NetflixBrowser from './components/NetflixBrowser/NetflixBrowser'
 
 
 
@@ -7,7 +7,7 @@ function App() {
   return (
     <>
     <div>MOVIE ROULETTE</div>
-    <MovieList/>
+    <NetflixBrowser/>
     </>
   )
 }
