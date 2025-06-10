@@ -1,5 +1,5 @@
-import React from 'react';
 import { type MovieOrSeries } from '../NetflixBrowser/NetflixBrowser';
+
 
 type Props = {
   items: MovieOrSeries[];

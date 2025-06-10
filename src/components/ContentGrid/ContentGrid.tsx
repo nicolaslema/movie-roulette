@@ -1,6 +1,6 @@
-// src/components/ContentGrid.tsx
-import React from 'react';
 import { type MovieOrSeries } from '../NetflixBrowser/NetflixBrowser';
+import MovieDetailModal from '../MovieDetailModal/MovieDetailModal';
+import { useState } from 'react';
 
 type Props = {
   items: MovieOrSeries[];
@@ -9,6 +9,7 @@ type Props = {
 };
 
 export default function ContentGrid({ items, selectedItems, toggleSelection }: Props) {
+  const [selectedDetail, setSelectedDetail] = useState<MovieOrSeries | null>(null);
   return (
     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
       {items.length === 0 ? (
@@ -36,8 +37,28 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
               )}
               <button onClick={() => toggleSelection(item)} style={{ marginTop: '0.5rem' }}>
                 {isSelected ? 'Quitar de la lista' : 'Agregar a mi lista'}
+      
+    
               </button>
+              <button
+              onClick={() => setSelectedDetail(item)}
+              style={{
+                marginTop: '0.5rem',
+                backgroundColor: '#912f32',
+                color: 'white',
+                padding: '0.25rem 0.5rem',
+                border: 'none',
+                borderRadius: '4px',
+                cursor: 'pointer',
+              }}
+            >
+              📄 Detalles
+            </button>
+            {selectedDetail && (
+                <MovieDetailModal item={selectedDetail} onClose={() => setSelectedDetail(null)} />
+            )}
             </div>
+            
           );
         })
       )}

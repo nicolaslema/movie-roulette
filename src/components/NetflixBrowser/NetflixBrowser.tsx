@@ -15,6 +15,11 @@ export type MovieOrSeries = {
   name?: string;
   title?: string;
   poster_path: string;
+  overview?: string;
+  backdrop_path?: string;
+  vote_average?: number;
+  release_date?: string;
+  first_air_date?: string;
 };
 
 export default function NetflixBrowser() {
@@ -72,8 +77,8 @@ export default function NetflixBrowser() {
     <div>
       <h2>{isTV ? 'Series' : 'Películas'} en Netflix Argentina</h2>
 
-      <div>
-        <button onClick={() => handleTypeChange('movie')} disabled={!isTV}>
+      <div >
+        <button style={{marginRight: '1rem'}} onClick={() => handleTypeChange('movie')} disabled={!isTV}>
           Películas
         </button>
         <button onClick={() => handleTypeChange('tv')} disabled={isTV}>
@@ -81,9 +86,10 @@ export default function NetflixBrowser() {
         </button>
       </div>
 
-      <SearchBar query={searchQuery} onChange={setSearchQuery} onSubmit={handleSearch} />
+      <div style={{padding: '1rem'}}><SearchBar query={searchQuery} onChange={setSearchQuery} onSubmit={handleSearch} /></div>
 
-      {!searchQuery && (
+   <div style={{padding: '1rem'}}>
+   {!searchQuery && (
         <GenreSelector
           genres={genres}
           selectedGenre={selectedGenre}
@@ -91,6 +97,7 @@ export default function NetflixBrowser() {
         />
       )}
 
+   </div>
       <ContentGrid
         items={contentList}
         selectedItems={selectedItems}
