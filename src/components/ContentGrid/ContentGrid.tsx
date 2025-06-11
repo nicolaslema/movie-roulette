@@ -25,6 +25,7 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
                 border: isSelected ? '2px solid green' : '1px solid #ccc',
                 padding: '0.5rem',
                 borderRadius: '8px',
+                
               }}
             >
               <h4>{item.title || item.name}</h4>

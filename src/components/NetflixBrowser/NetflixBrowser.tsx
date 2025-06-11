@@ -4,6 +4,7 @@ import SearchBar from '../SearchBar/SearchBar';
 import GenreSelector from '../GenreSelector/GenreSelector';
 import ContentGrid from '../ContentGrid/ContentGrid';
 import SelectedList from '../SelectedList/SelectedList';
+import RatingFilter from '../RatingFilter/RatingFilter';
 
 export type Genre = {
   id: number;
@@ -32,6 +33,7 @@ export default function NetflixBrowser() {
   const [totalPages, setTotalPages] = useState(1);
   const [randomPick, setRandomPick] = useState<MovieOrSeries | null>(null);
   const [selectedItems, setSelectedItems] = useState<MovieOrSeries[]>([]);
+  const [minRating, setMinRating] = useState<number>(0);
 
   const contentType = isTV ? 'tv' : 'movie';
 
@@ -74,7 +76,8 @@ export default function NetflixBrowser() {
   };
 
   return (
-    <div>
+    <div 
+    >
       <h2>{isTV ? 'Series' : 'Películas'} en Netflix Argentina</h2>
 
       <div >
@@ -98,8 +101,9 @@ export default function NetflixBrowser() {
       )}
 
    </div>
+      <RatingFilter minRating={minRating} onChange={setMinRating} />
       <ContentGrid
-        items={contentList}
+        items={contentList.filter(item => (item.vote_average ?? 0) >= minRating)}
         selectedItems={selectedItems}
         toggleSelection={toggleSelection}
       />
