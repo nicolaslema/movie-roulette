@@ -78,7 +78,7 @@ export default function NetflixBrowser() {
   return (
     <div 
     >
-      <h2>{isTV ? 'Series' : 'Películas'} en Netflix Argentina</h2>
+      <h2 style={{fontSize: '2rem'}} >Movie Roulette</h2>
 
       <div >
         <button style={{marginRight: '1rem'}} onClick={() => handleTypeChange('movie')} disabled={!isTV}>
@@ -119,6 +119,11 @@ export default function NetflixBrowser() {
               style={{ borderRadius: '8px' }}
             />
           )}
+            <div style={{ marginTop: '1rem' }}>
+            <button onClick={() => setRandomPick(null)}>
+              Borrar elección
+            </button>
+          </div>
         </div>
       )}
 
