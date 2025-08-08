@@ -1,56 +1,70 @@
+import { useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { type MovieOrSeries } from '../NetflixBrowser/NetflixBrowser';
+
 interface Props {
   item: MovieOrSeries;
   onClose: () => void;
 }
 
 export default function MovieDetailModal({ item, onClose }: Props) {
+  const modalRef = useRef<HTMLDivElement>(null);
+
+  // Cierre al hacer click fuera del modal
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (modalRef.current && !modalRef.current.contains(e.target as Node)) {
+        onClose();
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [onClose]);
+
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      width: '100vw',
-      height: '100vh',
-      backgroundColor: 'rgba(0, 0, 0, 0.8)',
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      zIndex: 1000
-    }}>
-      <div style={{
-        backgroundColor: '#181818',
-        borderRadius: '10px',
-        width: '90%',
-        maxWidth: '800px',
-        padding: '1rem',
-        color: 'white',
-        position: 'relative'
-      }}>
-        <button onClick={onClose} style={{
-          position: 'absolute',
-          top: '10px',
-          right: '10px',
-          background: 'transparent',
-          border: 'none',
-          color: 'white',
-          fontSize: '1.5rem',
-          cursor: 'pointer'
-        }}>×</button>
+    <AnimatePresence>
+      {item && (
+        <motion.div
+          className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-xl "
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+        >
+          <motion.div
+            ref={modalRef}
+            className="relative w-[100%] max-w-3xl bg-[#181818] text-white rounded-xl p-6 shadow-2xl"
+            initial={{ y: 50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 50, opacity: 0 }}
+            transition={{ duration: 0.4, ease: 'easeOut' }}
+          >
+            <button
+              onClick={onClose}
+              className="absolute top-0 right-1 text-white text-2xl hover:text-red-400 transition "
+              aria-label="Cerrar modal"
+            >
+              ×
+            </button>
 
-        {item.backdrop_path && (
-          <img
-            src={`https://image.tmdb.org/t/p/w780${item.backdrop_path}`}
-            alt={item.title || item.name}
-            style={{ width: '100%', borderRadius: '10px' }}
-          />
-        )}
+            {item.backdrop_path && (
+              <img
+                src={`https://image.tmdb.org/t/p/w780${item.backdrop_path}`}
+                alt={item.title || item.name}
+                className="w-full rounded-lg mb-2"
+              />
+            )}
 
-        <h2>{item.title || item.name}</h2>
-        <p><strong>Rating:</strong> ⭐ {item.vote_average}</p>
-        <p><strong>Fecha:</strong> {item.release_date || item.first_air_date}</p>
-        <p style={{ marginTop: '1rem' }}>{item.overview}</p>
-      </div>
-    </div>
+            <h2 className="text-2xl font-semibold mb-2">{item.title || item.name}</h2>
+            <p className="mb-1">
+              <strong>Rating:</strong> ⭐ {item.vote_average}
+            </p>
+            <p className="mb-1">
+              <strong>Fecha:</strong> {item.release_date || item.first_air_date}
+            </p>
+            <p className="mt-4 text-sm leading-relaxed">{item.overview}</p>
+          </motion.div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }

@@ -1,5 +1,4 @@
 // src/components/GenreSelector.tsx
-import React from 'react';
 import {type Genre}  from '../NetflixBrowser/NetflixBrowser';
 
 type Props = {
@@ -11,9 +10,9 @@ type Props = {
 export default function GenreSelector({ genres, selectedGenre, onChange }: Props) {
   return (
     <select onChange={(e) => onChange(Number(e.target.value) || null)} value={selectedGenre ?? ''}>
-      <option value="">Todos los géneros</option>
+      <option className='text-black' value="">Todos los géneros</option>
       {genres.map((genre) => (
-        <option key={genre.id} value={genre.id}>
+        <option className='text-black' key={genre.id} value={genre.id}>
           {genre.name}
         </option>
       ))}

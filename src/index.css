@@ -1,14 +1,12 @@
+@import "tailwindcss";
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
   margin: 0 auto;
   color-scheme: light dark;
-
-  background-color: #1d1d2b;
-
-  background: 'linear-gradient(135deg, #141e30, #243b55)';
   color: '#fff';
+  background-color: #111316;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

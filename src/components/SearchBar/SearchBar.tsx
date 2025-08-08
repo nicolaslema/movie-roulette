@@ -9,15 +9,21 @@ type Props = {
 
 export default function SearchBar({ query, onChange, onSubmit }: Props) {
   return (
-    <form onSubmit={onSubmit} style={{ marginBottom: '1rem' }}>
-      <input
-        type="text"
-        placeholder="Buscar por nombre"
-        value={query}
-        onChange={(e) => onChange(e.target.value)}
-        style={{ padding: '0.5rem', width: '200px', marginRight: '0.5rem' }}
-      />
-      <button type="submit">Buscar</button>
-    </form>
+<form onSubmit={onSubmit} className="mb-4 flex items-center">
+  <input
+    type="text"
+    placeholder="Buscar por nombre"
+    value={query}
+    onChange={(e) => onChange(e.target.value)}
+    className="px-2 py-2 w-[200px] mr-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+  />
+  <button
+    type="submit"
+    className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+  >
+    Buscar
+  </button>
+</form>
+
   );
 }
