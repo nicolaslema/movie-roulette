@@ -1,6 +1,6 @@
 import { useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { type MovieOrSeries } from '../NetflixBrowser/NetflixBrowser';
+import { type MovieOrSeries } from '../../types/MovieTypes';
 
 interface Props {
   item: MovieOrSeries;
@@ -26,17 +26,25 @@ export default function MovieDetailModal({ item, onClose }: Props) {
       {item && (
         <motion.div
           className="fixed inset-0 z-[1000] flex items-center justify-center bg-black/80 backdrop-blur-xl "
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
+       initial={{ opacity: 0 }}
+  animate={{ opacity: 1 }}
+  exit={{ opacity: 0 }}
+  transition={{ duration: 0.3 }}
+
         >
           <motion.div
             ref={modalRef}
             className="relative w-[100%] max-w-3xl bg-[#181818] text-white rounded-xl p-6 shadow-2xl"
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 50, opacity: 0 }}
-            transition={{ duration: 0.4, ease: 'easeOut' }}
+          initial={{ rotate: -10, scale: 0.8, opacity: 0 }}
+  animate={{ rotate: 0, scale: 1, opacity: 1 }}
+  exit={{ rotate: 10, scale: 0.8, opacity: 0 }}
+  transition={{
+    type: 'spring',
+    stiffness: 300,
+    damping: 20,
+    duration: 0.6,
+  }}
+
           >
             <button
               onClick={onClose}

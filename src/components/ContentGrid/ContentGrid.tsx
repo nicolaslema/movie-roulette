@@ -1,4 +1,4 @@
-import { type MovieOrSeries } from '../NetflixBrowser/NetflixBrowser';
+import { type MovieOrSeries } from '../../types/MovieTypes';
 import MovieDetailModal from '../MovieDetailModal/MovieDetailModal';
 import { useState } from 'react';
 

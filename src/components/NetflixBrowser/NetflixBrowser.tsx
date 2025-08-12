@@ -6,24 +6,7 @@ import ContentGrid from '../ContentGrid/ContentGrid';
 import SelectedList from '../SelectedList/SelectedList';
 import RatingFilter from '../RatingFilter/RatingFilter';
 import { motion, AnimatePresence } from 'framer-motion';
-
-
-export type Genre = {
-  id: number;
-  name: string;
-};
-
-export type MovieOrSeries = {
-  id: number;
-  name?: string;
-  title?: string;
-  poster_path: string;
-  overview?: string;
-  backdrop_path?: string;
-  vote_average?: number;
-  release_date?: string;
-  first_air_date?: string;
-};
+import type { MovieOrSeries, Genre } from '../../types/MovieTypes';
 
 export default function NetflixBrowser() {
   const [contentList, setContentList] = useState<MovieOrSeries[]>([]);
@@ -102,11 +85,11 @@ export default function NetflixBrowser() {
     </button>
   </div>
 
-  <div className="mb-6">
+  <div className="mb-6 ">
     <SearchBar query={searchQuery} onChange={setSearchQuery} onSubmit={handleSearch} />
   </div>
 
-  <div className="mb-6">
+  <div className="mb-6 ">
     {!searchQuery && (
       <GenreSelector
         genres={genres}
@@ -170,16 +153,8 @@ export default function NetflixBrowser() {
         items={selectedItems}
         onRemove={(id) => setSelectedItems(selectedItems.filter((i) => i.id !== id))}
         onClear={() => setSelectedItems([])}
+        onPickRandom={pickRandomFromSelection}
       />
-
-      <div className="mt-6">
-        <button
-          onClick={pickRandomFromSelection}
-          className="px-5 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition"
-        >
-          🎲 Seleccionar aleatoriamente ({selectedItems.length} seleccionadas)
-        </button>
-      </div>
     </>
   )}
 

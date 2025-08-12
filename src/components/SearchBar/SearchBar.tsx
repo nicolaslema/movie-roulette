@@ -15,7 +15,7 @@ export default function SearchBar({ query, onChange, onSubmit }: Props) {
     placeholder="Buscar por nombre"
     value={query}
     onChange={(e) => onChange(e.target.value)}
-    className="px-2 py-2 w-[200px] mr-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+    className="px-2 py-2 w-[200px] mr-2 p-2  rounded-2xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500"
   />
   <button
     type="submit"
