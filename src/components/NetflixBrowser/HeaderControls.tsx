@@ -26,10 +26,10 @@ export default function HeaderControls({
 }: Props) {
   return (
     <>
-      <div className="mb-6 flex gap-3 z-10">
+      <div className="mb-6 flex gap-4 z-10">
         <button
           className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${
-            isTV ? 'bg-indigo-600 hover:bg-indigo-700/30' : 'bg-gray-800 opacity-60 cursor-not-allowed'
+            isTV ? 'bg-red-600 hover:bg-red-700/30' : 'bg-red-200 opacity-60 cursor-not-allowed'
           }`}
           onClick={() => onTypeChange('movie')}
           disabled={!isTV}
@@ -38,7 +38,7 @@ export default function HeaderControls({
         </button>
         <button
           className={`px-5 py-2 rounded-lg text-sm font-semibold transition ${
-            isTV ? 'bg-gray-800 opacity-60 cursor-not-allowed' : 'bg-indigo-600 hover:bg-indigo-700/30'
+            isTV ? 'bg-red-200 opacity-60 cursor-not-allowed' : 'bg-red-900 hover:bg-red-700/30'
           }`}
           onClick={() => onTypeChange('tv')}
           disabled={isTV}

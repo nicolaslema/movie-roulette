@@ -13,16 +13,16 @@ export default function NetflixBrowser() {
   const filteredContent = state.contentList.filter(item => (item.vote_average ?? 0) >= state.minRating);
 
   return (
-   <div className=" bg-slate-800/30 text-white rounded-xl shadow-lg">
+   <div className=" bg-slate-800/30 text-white rounded-xl shadow-lg  oxanium-uniquifier ">
       <div className="min-h-screen px-4 py-12 text-zinc-50 relative transition-colors duration-500 z-2">
         <AnimatedBackground darkMode={true} />
         <div className="z-20">
-          <h2 className="text-4xl font-bold mb-8 tracking-tight z-10 mt-2">Movie Roulette 🎥 </h2>
+          <h1 className="text-6xl font-bold mb-12 tracking-tight z-10 oxanium-uniquifier ">Movie Roulette </h1>
 
           {/* Header Controls */}
-          <div className="mb-12 mt-12 flex gap-4 z-10 justify-between items-center w-full p-4">
-            <button
-              className={`px-2 py-2 rounded-lg text-sm font-semibold transition w-[30%] ${
+          <div className="flex-col md:flex gap-4 z-10 justify-between items-center w-full h-full p-4">
+           <div className='md:flex flex gap-4 justify-center items-center '> <button
+              className={`px-2 py-2 rounded-lg text-sm font-semibold transition w-[100%]  ${
                 state.isTV ? 'bg-slate-700/30 hover:bg-indigo-700 border border-zinc-500/30' : 'bg-gray-800/30 border border-zinc-500/30 opacity-60 cursor-not-allowed'
               }`}
               onClick={() => state.handleTypeChange('movie')}
@@ -31,7 +31,7 @@ export default function NetflixBrowser() {
               Películas
             </button>
             <button
-              className={`px-5 py-2 rounded-lg text-sm font-semibold transition w-[30%] ${
+              className={`px-5 py-2 rounded-lg text-sm font-semibold transition w-[100%] ${
                 state.isTV ? 'bg-gray-800/30 opacity-60 cursor-not-allowed border border-zinc-500/30' : 'bg-slate-700/30 hover:bg-indigo-700 border border-zinc-500/30'
               }`}
               onClick={() => state.handleTypeChange('tv')}
@@ -39,8 +39,9 @@ export default function NetflixBrowser() {
             >
               Series
             </button>
+            </div>
           {!state.searchQuery && (
-            <div className="">
+            <div className="flex md:flex-col mt-2 mb-2 ">
               <GenreSelector
                 genres={state.genres}
                 selectedGenre={state.selectedGenre}
