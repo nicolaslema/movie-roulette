@@ -14,7 +14,7 @@ type RatingFilterProps = {
       key={rating}
       onClick={() => onChange(rating)}
       className={`mr-2 px-3 py-1 rounded 
-        ${minRating === rating ? 'bg-[#e50914]' : 'bg-[#333]'} 
+        ${minRating === rating ? 'bg-[#e50914]' : 'bg-slate-900/30'} 
         text-white cursor-pointer transition`}
     >
       <div className="flex flex-wrap gap-4 items-center">

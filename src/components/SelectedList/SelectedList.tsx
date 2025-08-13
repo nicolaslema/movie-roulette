@@ -1,63 +1,67 @@
 import { useState, useEffect } from 'react';
-import { type MovieOrSeries } from '../../types/MovieTypes';
+import type { MovieOrSeries } from '../../types/MovieTypes';
 
 type Props = {
   items: MovieOrSeries[];
   onRemove: (id: number) => void;
   onClear: () => void;
-   onPickRandom: () => void;
-
+  onPickRandom: () => void;
 };
+
+const DESKTOP_BREAKPOINT = 1280;
 
 export default function SelectedList({ items, onRemove, onClear, onPickRandom }: Props) {
   const [isOpen, setIsOpen] = useState(false);
-  
-  // Abrir automáticamente en desktop
+  const [isMobile, setIsMobile] = useState(false);
+
   useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 768) setIsOpen(true);
+    const updateDevice = () => {
+      const mobile = window.innerWidth < DESKTOP_BREAKPOINT;
+      setIsMobile(mobile);
+      setIsOpen(!mobile); // abrir automáticamente en desktop
     };
-    handleResize();
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    updateDevice();
+    window.addEventListener('resize', updateDevice);
+    return () => window.removeEventListener('resize', updateDevice);
   }, []);
 
   return (
     <>
-      {/* Botón flotante solo en mobile */}
-      {!isOpen && (
+      {/* Botón flotante siempre visible en mobile */}
+      {isMobile && !isOpen && (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 z-40 bg-[#457b9d] text-white px-4 py-2 rounded-full shadow-lg md:hidden"
+          className="fixed bottom-4 right-4 z-[999] bg-[#457b9d] text-white px-4 py-2 rounded-full shadow-xl"
         >
           📂 Abrir lista
         </button>
       )}
 
       {/* Overlay solo en mobile */}
-      {isOpen && window.innerWidth < 768 && (
+      {isMobile && isOpen && (
         <div
           onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          className="fixed inset-0 bg-black/50 z-[998]"
         />
       )}
 
-      {/* Panel lateral flotante */}
+      {/* Panel lateral */}
       <div
-        className={`fixed top-0 right-0 h-screen w-80 p-6 bg-slate-800/90 text-white overflow-y-scroll scrollbar-hide shadow-xl z-50 transition-transform duration-300
+        className={`fixed top-0 right-0 h-screen w-80 p-6 bg-slate-800/30 text-white  overflow-y-scroll scrollbar-hide shadow-2xl z-[1000] transition-transform duration-300
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-          md:translate-x-0`}
+          ${!isMobile ? 'translate-x-0' : ''}`}
       >
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold">🎞️ Mi lista personalizada</h3>
-          {/* Botón cerrar solo en mobile */}
-          <button
-            onClick={() => setIsOpen(false)}
-            className="md:hidden text-white text-2xl font-bold"
-            title="Cerrar"
-          >
-            ×
-          </button>
+          {isMobile && (
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-white text-2xl font-bold"
+              title="Cerrar"
+            >
+              ×
+            </button>
+          )}
         </div>
 
         <button
@@ -67,50 +71,53 @@ export default function SelectedList({ items, onRemove, onClear, onPickRandom }:
           🧹 Vaciar toda la lista
         </button>
 
-        <div
-          className="grid gap-3"
-          style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}
-        >
-          {items.map((item) => (
-            <div
-              key={item.id}
-              className="relative bg-[#1a1918] rounded-lg p-1 shadow-sm text-center"
-            >
-              <h5 className="text-xs font-medium min-h-[2rem] mb-1">
-                {item.title || item.name}
-              </h5>
-
-              {item.poster_path && (
-                <img
-                  src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
-                  alt={item.title || item.name}
-                  className="w-full rounded-md"
-                />
-              )}
-
-              <button
-                onClick={() => onRemove(item.id)}
-                title="Eliminar de la lista"
-                className="absolute top-1 right-1 w-5 h-5 flex items-center justify-center text-white font-bold bg-[#ff6b6b] rounded-full hover:bg-[#ff4c4c] transition text-sm"
+        {items.length === 0 ? (
+          <p className="text-sm text-gray-300">No hay elementos seleccionados aún.</p>
+        ) : (
+          <div
+            className="grid gap-3"
+            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}
+          >
+            {items.map((item) => (
+              <div
+                key={item.id}
+                className="relative bg-[#1a1918] rounded-lg p-1 shadow-sm text-center"
               >
-                ×
-              </button>
-            </div>
-          ))}
-        </div>
+                <h5 className="text-xs font-medium min-h-[2rem] mb-1">
+                  {item.title || item.name}
+                </h5>
+
+                {item.poster_path && (
+                  <img
+                    src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
+                    alt={item.title || item.name}
+                    className="w-full rounded-md"
+                  />
+                )}
+
+                <button
+                  onClick={() => onRemove(item.id)}
+                  title="Eliminar de la lista"
+                  className="absolute top-1 right-1 w-5 h-5 flex items-center justify-center text-white font-bold bg-[#ff6b6b] rounded-full hover:bg-[#ff4c4c] transition text-sm"
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         {items.length > 0 && (
-  <button
-    onClick={() => {
-      onPickRandom();
-      if (window.innerWidth < 768) setIsOpen(false);
-    }}
-    className="mt-6 w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition"
-  >
-    🎲 Selección aleatoria ({items.length})
-  </button>
-)}
-
-
+          <button
+            onClick={() => {
+              onPickRandom();
+              if (isMobile) setIsOpen(false);
+            }}
+            className="mt-6 w-full px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition"
+          >
+            🎲 Selección aleatoria ({items.length})
+          </button>
+        )}
       </div>
     </>
   );
