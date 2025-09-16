@@ -1,6 +1,5 @@
-// hooks/useNetflixBrowserState.ts
 import { useEffect, useState } from 'react';
-import { fetchGenres, fetchContent } from '../services/tmdbService';
+import { fetchGenres, fetchContent, getTrailerUrl } from '../services/tmdbService';
 import type { MovieOrSeries, Genre } from '../types/MovieTypes';
 
 export function useNetflixBrowserState() {
@@ -14,6 +13,7 @@ export function useNetflixBrowserState() {
   const [randomPick, setRandomPick] = useState<MovieOrSeries | null>(null);
   const [selectedItems, setSelectedItems] = useState<MovieOrSeries[]>([]);
   const [minRating, setMinRating] = useState<number>(0);
+  const [trailerUrl, setTrailerUrl] = useState<string | null>(null); // 👈 nuevo estado
 
   const contentType = isTV ? 'tv' : 'movie';
 
@@ -33,10 +33,20 @@ export function useNetflixBrowserState() {
     setSelectedItems(exists ? selectedItems.filter((i) => i.id !== item.id) : [...selectedItems, item]);
   };
 
-  const pickRandomFromSelection = () => {
+  const pickRandomFromSelection = async () => {
     if (selectedItems.length === 0) return;
     const randomItem = selectedItems[Math.floor(Math.random() * selectedItems.length)];
     setRandomPick(randomItem);
+
+    // 👇 traer trailer
+    try {
+      const url = await getTrailerUrl(randomItem);
+      setTrailerUrl(url);
+      console.log(url)
+    } catch (error) {
+      console.error('Error al obtener el trailer:', error);
+      setTrailerUrl(null);
+    }
   };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -74,5 +84,6 @@ export function useNetflixBrowserState() {
     handleSearch,
     handleTypeChange,
     contentType,
+    trailerUrl, // 👈 exportamos el trailer
   };
 }

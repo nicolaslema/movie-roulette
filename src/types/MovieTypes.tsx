@@ -4,6 +4,7 @@ export type Genre = {
 };
 
 export type MovieOrSeries = {
+  media_type: any;
   id: number;
   name?: string;
   title?: string;
@@ -13,4 +14,5 @@ export type MovieOrSeries = {
   vote_average?: number;
   release_date?: string;
   first_air_date?: string;
+  video?: string;
 };

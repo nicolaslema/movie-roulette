@@ -11,6 +11,7 @@ type Props = {
 export default function ContentGrid({ items, selectedItems, toggleSelection }: Props) {
   const [selectedDetail, setSelectedDetail] = useState<MovieOrSeries | null>(null);
 
+
   return (
     <div className="relative">
       <div className="flex flex-wrap gap-4">
@@ -28,6 +29,7 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
               >
                 <h4 className="font-semibold text-base mb-2 overflow-hidden text-ellipsis whitespace-nowrap">
                   {item.title || item.name}
+                  
                 </h4>
 
                 {item.poster_path && (

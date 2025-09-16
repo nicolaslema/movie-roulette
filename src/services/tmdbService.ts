@@ -1,5 +1,7 @@
 // src/services/tmdbService.ts
 
+import { type MovieOrSeries } from "../types/MovieTypes";
+
 const API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
 const LANGUAGE = 'es';
@@ -11,6 +13,21 @@ export const fetchGenres = async (type: 'movie' | 'tv') => {
   const data = await response.json();
   return data.genres;
 };
+
+export async function getTrailerUrl(item: MovieOrSeries): Promise<string | null> {
+  const { id, media_type } = item;
+  const type = media_type || 'movie'; // fallback por si falta
+
+  const res = await fetch(`https://api.themoviedb.org/3/${type}/${id}/videos?api_key=${API_KEY}`);
+  const data = await res.json();
+
+  const trailer = data.results.find(
+    (v: any) => v.type === 'Trailer' && v.site === 'YouTube'
+  );
+
+  return trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
+}
+
 
 export const fetchContent = async (
   type: 'movie' | 'tv',
