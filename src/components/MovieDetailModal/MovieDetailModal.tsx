@@ -31,7 +31,8 @@ export default function MovieDetailModal({ item, onClose }: Props) {
 
       try {
         const res = await fetch(
-          `https://api.themoviedb.org/3/${type}/${item.id}/videos?api_key=${process.env.TMDB_API_KEY}&language=es-ES`
+          `https://api.themoviedb.org/3/${type}/${item.id}/videos?api_key=${process.env.TMDB_API_KEY}&language=en-US
+`
         );
         const data = await res.json();
         const trailer = data.results.find(
