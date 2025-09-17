@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { FaPlus, FaMinus, FaInfoCircle } from 'react-icons/fa';
 import type { MovieOrSeries } from '../../types/MovieTypes';
 import MovieDetailModal from '../MovieDetailModal/MovieDetailModal';
 
@@ -11,55 +13,69 @@ type Props = {
 export default function ContentGrid({ items, selectedItems, toggleSelection }: Props) {
   const [selectedDetail, setSelectedDetail] = useState<MovieOrSeries | null>(null);
 
-
   return (
     <div className="relative">
-      <div className="flex flex-wrap gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-6 ">
         {items.length === 0 ? (
-          <p>No se encontraron resultados.</p>
+          <p className="text-center text-gray-400 col-span-full">No se encontraron resultados.</p>
         ) : (
           items.map((item) => {
             const isSelected = selectedItems.some((i) => i.id === item.id);
+
             return (
-              <div
+              <motion.div
                 key={item.id}
-                className={`flex flex-col w-[190px] min-h-[400px] p-2 rounded-lg bg-slate-700/30 backdrop-blur-3xl shadow-2xl ${
-                  isSelected ? 'border-2 border-green-500' : 'border border-gray-300/30'
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                whileHover={{ scale: 1.05 }}
+                transition={{ duration: 0.3 }}
+                className={`flex flex-col justify-between min-h-[420px] p-4 rounded-xl bg-gradient-to-br from-neutral-800/50 to-neutral-700/50 shadow-xl hover:shadow-2xl transform-gpu ${
+                  isSelected ? 'border-2 shadow-red-500/20 border-red-500/30' : 'border border-neutral-700/30'
                 }`}
               >
-                <h4 className="font-semibold text-base mb-2 overflow-hidden text-ellipsis whitespace-nowrap">
+                <h4 className="font-bold text-lg text-white mb-2 truncate">
                   {item.title || item.name}
-                  
                 </h4>
 
                 {item.poster_path && (
-                  <img
+                  <motion.img
                     src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
                     alt={item.title || item.name}
-                    className="rounded-lg mb-2"
+                    className="rounded-lg mb-4 object-cover w-full h-[280px]"
+                    whileHover={{ scale: 1.02 }}
+                    transition={{ duration: 0.2 }}
                   />
                 )}
 
-                <button
-                  onClick={() => toggleSelection(item)}
-                  className="mt-2 w-full px-2 py-1 bg-slate-700 text-gray-200 rounded hover:bg-slate-900 transition"
-                >
-                  {isSelected ? 'Quitar de la lista' : 'Agregar a mi lista'}
-                </button>
+                <div className="flex flex-col gap-2 mt-auto">
+                  <motion.button
+                    onClick={() => toggleSelection(item)}
+                    whileTap={{ scale: 0.95 }}
+                    className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
+                      isSelected
+                        ? 'bg-red-500/30 hover:bg-red-700/30 text-white'
+                        : 'bg-neutral-900/30 hover:bg-green-700/30 text-white'
+                    }`}
+                  >
+                    {isSelected ? <FaMinus /> : <FaPlus />}
+                    {isSelected ? 'Quitar de la lista' : 'Agregar a mi lista'}
+                  </motion.button>
 
-                <button
-                  onClick={() => setSelectedDetail(item)}
-                  className="mt-2 w-full px-2 py-1 bg-[#093359] text-white rounded hover:bg-[#1c0a82] transition"
-                >
-                  📄 Detalles
-                </button>
-              </div>
+                  <motion.button
+                    onClick={() => setSelectedDetail(item)}
+                    whileTap={{ scale: 0.95 }}
+                    className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-blue-800/30 hover:bg-blue-700/50 text-white transition"
+                  >
+                    <FaInfoCircle />
+                    Ver detalles
+                  </motion.button>
+                </div>
+              </motion.div>
             );
           })
         )}
       </div>
 
-      {/* Modal renderizado fuera del loop */}
       {selectedDetail && (
         <MovieDetailModal item={selectedDetail} onClose={() => setSelectedDetail(null)} />
       )}

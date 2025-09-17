@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import type { MovieOrSeries } from '../../types/MovieTypes';
+import { IoIosArrowDroprightCircle } from "react-icons/io";
+import { FaDiceFive } from "react-icons/fa";
 
 type Props = {
   items: MovieOrSeries[];
@@ -27,15 +29,15 @@ export default function SelectedList({ items, onRemove, onClear, onPickRandom }:
 
   return (
     <>
-      {/* Botón flotante siempre visible en mobile */}
-      {isMobile && !isOpen && (
+      {/* Botón flotante para abrir en mobile y desktop */}
+      {(isMobile && !isOpen) || (!isMobile && !isOpen) ? (
         <button
           onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 z-[999] bg-[#457b9d] text-white px-4 py-2 rounded-full shadow-xl"
+          className="fixed bottom-4 right-4 z-[999] bg-[#142b397d] text-white px-4 py-2 rounded-full shadow-xl"
         >
           📂 Abrir lista
         </button>
-      )}
+      ) : null}
 
       {/* Overlay solo en mobile */}
       {isMobile && isOpen && (
@@ -47,29 +49,42 @@ export default function SelectedList({ items, onRemove, onClear, onPickRandom }:
 
       {/* Panel lateral */}
       <div
-        className={`fixed top-0 right-0 h-screen w-80 p-6 bg-slate-800/50 backdrop-blur-lg text-white  overflow-y-scroll scrollbar-hide shadow-2xl z-[1000] transition-transform duration-300
+        className={`fixed top-0 right-0 h-screen w-80 p-6 border-l border-neutral-400/30 bg-neutral-900/30 backdrop-blur-lg text-white overflow-y-scroll scrollbar-hide shadow-2xl z-[1000] transition-transform duration-300
           ${isOpen ? 'translate-x-0' : 'translate-x-full'}
           ${!isMobile ? 'translate-x-0' : ''}`}
       >
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-semibold">🎞️ Mi lista</h3>
+          {/* Botón cerrar en mobile */}
           {isMobile && (
             <button
               onClick={() => setIsOpen(false)}
-              className="text-white text-2xl font-bold  "
+              className="text-white text-2xl font-bold"
               title="Cerrar"
             >
               ×
             </button>
           )}
+          {/* Botón colapsar en desktop */}
+          {!isMobile && (
+            <button
+              onClick={() => setIsOpen(false)}
+              className="text-white text-xl font-bold hover:text-red-400 transition"
+              title="Colapsar"
+            >
+              <IoIosArrowDroprightCircle size={34}/>
+            </button>
+          )}
         </div>
 
-        <button
+   <div className='flex justify-center items-center'>
+         <button
           onClick={onClear}
           className="mb-4 px-4 py-2 bg-red-900 text-white rounded hover:bg-[#d52c39] transition"
         >
-           Vaciar toda la lista
+          Vaciar toda la lista
         </button>
+   </div>
 
         {items.length === 0 ? (
           <p className="text-sm text-gray-300">No hay elementos seleccionados aún.</p>
@@ -81,7 +96,7 @@ export default function SelectedList({ items, onRemove, onClear, onPickRandom }:
             {items.map((item) => (
               <div
                 key={item.id}
-                className="relative bg-[#1a1918] p-5 rounded-lg  shadow-sm text-center"
+                className="relative bg-[#1a1918] p-5 rounded-lg shadow-sm text-center"
               >
                 <h5 className="text-xs font-medium min-h-[2rem] mb-1">
                   {item.title || item.name}
@@ -113,9 +128,9 @@ export default function SelectedList({ items, onRemove, onClear, onPickRandom }:
               onPickRandom();
               if (isMobile) setIsOpen(false);
             }}
-            className="mt-6 w-full px-4 py-2 bg-indigo-900 hover:bg-indigo-700 text-white rounded-lg transition"
+            className="mt-6 w-full px-4 py-2 bg-neutral-900/70 hover:bg-neutral-700/70 text-white rounded-lg flex justify-center items-center gap-4 transition"
           >
-            🎲 Selección aleatoria ({items.length})
+            <FaDiceFive/> Randomize ({items.length})
           </button>
         )}
       </div>

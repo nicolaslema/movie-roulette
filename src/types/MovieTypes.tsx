@@ -4,6 +4,7 @@ export type Genre = {
 };
 
 export type MovieOrSeries = {
+  genre_ids: any;
   media_type: any;
   id: number;
   name?: string;
