@@ -10,29 +10,33 @@ export default function NetflixBrowser() {
   const state = useNetflixBrowserState();
   const loader = useRef<HTMLDivElement | null>(null);
 
+  // callback para IntersectionObserver
   const handleObserver = useCallback(
-  (entries: IntersectionObserverEntry[]) => {
+    (entries: IntersectionObserverEntry[]) => {
       const target = entries[0];
       if (target.isIntersecting && state.page < state.totalPages) {
         state.setPage((p) => p + 1);
       }
     },
-      [state.page, state.totalPages]
+    [state.page, state.totalPages]
   );
 
   useEffect(() => {
-  const option = { root: null, rootMargin: '20px', threshold: 1.0 };
-  const observer = new IntersectionObserver(handleObserver, option);
-  if (loader.current) observer.observe(loader.current);
+    // opciones del observer
+    const option = { root: null, rootMargin: '200px', threshold: 0 };
+    const observer = new IntersectionObserver(handleObserver, option);
 
-  return () => {
-    if (loader.current) observer.unobserve(loader.current);
-  };
+    if (loader.current) observer.observe(loader.current);
+
+    return () => {
+      if (loader.current) observer.unobserve(loader.current);
+    };
   }, [handleObserver]);
 
   const filteredContent = state.contentList.filter(
     (item) => (item.vote_average ?? 0) >= state.minRating
   );
+
   return (
     <div className="bg-gradient-to-t from-neutral-950/90 to-red-900/60 text-white shadow-lg oxanium-uniquifier px-4 sm:px-6 md:px-12 lg:px-24 xl:px-32 ">
       <div className="min-h-screen py-8 text-zinc-50 relative transition-colors duration-500 z-2 ">
@@ -43,13 +47,13 @@ export default function NetflixBrowser() {
 
           {/* Header Controls */}
           <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between w-full mb-6">
-         <div className='w-full'>
-             <SearchBar
-              query={state.searchQuery}
-              onChange={state.setSearchQuery}
-              onSubmit={state.handleSearch}
-            />
-         </div>
+            <div className="w-full">
+              <SearchBar
+                query={state.searchQuery}
+                onChange={state.setSearchQuery}
+                onSubmit={state.handleSearch}
+              />
+            </div>
 
             <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
               <button
@@ -76,6 +80,7 @@ export default function NetflixBrowser() {
               </button>
             </div>
           </div>
+
           {!state.searchQuery && (
             <div className="mb-6">
               <GenreSelector
@@ -98,20 +103,21 @@ export default function NetflixBrowser() {
             <div className="pointer-events-auto mt-8">
               <SelectedList
                 items={state.selectedItems}
-                onRemove={(id) => state.setSelectedItems(state.selectedItems.filter((i) => i.id !== id))}
+                onRemove={(id) =>
+                  state.setSelectedItems(state.selectedItems.filter((i) => i.id !== id))
+                }
                 onClear={() => state.setSelectedItems([])}
                 onPickRandom={state.pickRandomFromSelection}
               />
             </div>
           )}
 
-              <div ref={loader} className="py-8 text-center text-gray-400">
+          {/* Loader para scroll infinito */}
+          <div ref={loader} className="py-8 text-center text-gray-400">
             {state.page < state.totalPages ? 'Cargando más...' : 'No hay más resultados'}
           </div>
-
         </div>
       </div>
     </div>
   );
 }
-

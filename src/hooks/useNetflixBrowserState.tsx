@@ -14,24 +14,30 @@ export function useNetflixBrowserState() {
   const [selectedItems, setSelectedItems] = useState<MovieOrSeries[]>([]);
   const [minRating, setMinRating] = useState<number>(0);
   const [trailerUrl, setTrailerUrl] = useState<string | null>(null); // 👈 nuevo estado
-
   const contentType = isTV ? 'tv' : 'movie';
 
   useEffect(() => {
     fetchGenres(contentType).then(setGenres);
   }, [contentType]);
-
 useEffect(() => {
+  let isMounted = true;
+
   fetchContent(contentType, page, searchQuery, selectedGenre).then(({ results, totalPages }) => {
-    setContentList((prev) => {
-  const merged = page === 1 ? results : [...prev, ...results];
-  return merged.filter(
-    (item: { id: any; }, index: any, self: any[]) => index === self.findIndex((t) => t.id === item.id)
-  );
+    if (!isMounted) return;
+
+setContentList(prev => {
+  if (page === 1) return results; // reemplaza si es primera página
+  const merged = [...prev, ...results];
+  return merged.filter((item, idx, self) => idx === self.findIndex(t => t.id === item.id));
 });
+
     setTotalPages(totalPages);
   });
-}, [isTV, selectedGenre, searchQuery, page]);
+
+  return () => {
+    isMounted = false;
+  };
+}, [contentType, selectedGenre, searchQuery, page]);
 
   const toggleSelection = (item: MovieOrSeries) => {
     const exists = selectedItems.some((i) => i.id === item.id);
@@ -54,8 +60,9 @@ useEffect(() => {
     }
   };
   const resetContent = () => {
-    setContentList([]);
-    setPage(1);
+  setContentList([]);
+  setPage(1);
+  setTotalPages(1); 
 };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
@@ -64,15 +71,15 @@ useEffect(() => {
   };
 
   const handleTypeChange = (type: 'movie' | 'tv') => {
-    setIsTV(type === 'tv');
-    setSelectedGenre(null);
-    setSearchQuery('');
-    resetContent();
+   setIsTV(type === 'tv');
+  setSelectedGenre(null);
+  setSearchQuery('');
+  resetContent(); // 👈 solo aquí
   };
 
   const handleGenreChange = (genreId: number | null) => {
-  setSelectedGenre(genreId);
-  resetContent()
+   setSelectedGenre(genreId);
+  resetContent(); // 🔥 con esto basta
 };
 
   return {
