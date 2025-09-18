@@ -25,11 +25,12 @@ useEffect(() => {
   fetchContent(contentType, page, searchQuery, selectedGenre).then(({ results, totalPages }) => {
     if (!isMounted) return;
 
-setContentList(prev => {
-  if (page === 1) return results; // reemplaza si es primera página
-  const merged = [...prev, ...results];
-  return merged.filter((item, idx, self) => idx === self.findIndex(t => t.id === item.id));
-});
+    setContentList(prev => {
+      if (page === 1) return results; // reemplaza la lista al resetear
+      // acumula y evita duplicados
+      const merged = [...prev, ...results];
+      return merged.filter((item, idx, self) => idx === self.findIndex(t => t.id === item.id));
+    });
 
     setTotalPages(totalPages);
   });
@@ -60,7 +61,7 @@ setContentList(prev => {
     }
   };
   const resetContent = () => {
-  setContentList([]);
+setContentList([]);
   setPage(1);
   setTotalPages(1); 
 };
