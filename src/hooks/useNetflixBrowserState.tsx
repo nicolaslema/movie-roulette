@@ -1,87 +1,94 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { fetchGenres, fetchContent, getTrailerUrl } from '../services/tmdbService';
-import type { MovieOrSeries, Genre } from '../types/MovieTypes';
+import type { MovieOrSeries } from '../types/MovieTypes';
 
 export function useNetflixBrowserState() {
-  const [contentList, setContentList] = useState<MovieOrSeries[]>([]);
-  const [genres, setGenres] = useState<Genre[]>([]);
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
   const [isTV, setIsTV] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [randomPick, setRandomPick] = useState<MovieOrSeries | null>(null);
   const [selectedItems, setSelectedItems] = useState<MovieOrSeries[]>([]);
   const [minRating, setMinRating] = useState<number>(0);
-  const [trailerUrl, setTrailerUrl] = useState<string | null>(null); // 👈 nuevo estado
-  const contentType = isTV ? 'tv' : 'movie';
+  const contentType: 'movie' | 'tv' = isTV ? 'tv' : 'movie';
 
-  useEffect(() => {
-    fetchGenres(contentType).then(setGenres);
-  }, [contentType]);
-useEffect(() => {
-  let isMounted = true;
-
-  fetchContent(contentType, page, searchQuery, selectedGenre).then(({ results, totalPages }) => {
-    if (!isMounted) return;
-
-    setContentList(prev => {
-      if (page === 1) return results; // reemplaza la lista al resetear
-      // acumula y evita duplicados
-      const merged = [...prev, ...results];
-      return merged.filter((item, idx, self) => idx === self.findIndex(t => t.id === item.id));
-    });
-
-    setTotalPages(totalPages);
+  // 🔍 Fetch de géneros
+  const { data: genres = [] } = useQuery({
+    queryKey: ['genres', contentType],
+    queryFn: () => fetchGenres(contentType),
+    staleTime: 1000 * 60 * 10,
   });
 
-  return () => {
-    isMounted = false;
-  };
-}, [contentType, selectedGenre, searchQuery, page]);
+  // 🎬 Scroll infinito de contenido
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: ['content', contentType, searchQuery, selectedGenre],
+    queryFn: ({ pageParam = 1 }: { pageParam?: number }) =>
+      fetchContent(contentType, pageParam as number, searchQuery, selectedGenre),
+    getNextPageParam: (lastPage: { totalPages: number }, allPages) => {
+      const nextPage = allPages.length + 1;
+      return nextPage <= lastPage.totalPages ? nextPage : undefined;
+    },
+    initialPageParam: 1,
+    staleTime: 1000 * 60 * 5,
+  });
 
+  const contentList =
+    data?.pages.flatMap((page) => page.results) ?? [];
+
+  const totalPages = data?.pages[0]?.totalPages ?? 1;
+
+  // 🎥 Trailer del item seleccionado
+  const { data: trailerUrl } = useQuery({
+    queryKey: ['trailer', randomPick?.id],
+    queryFn: () => getTrailerUrl(randomPick!),
+    enabled: !!randomPick,
+  });
+
+  // ✅ Acciones
   const toggleSelection = (item: MovieOrSeries) => {
     const exists = selectedItems.some((i) => i.id === item.id);
-    setSelectedItems(exists ? selectedItems.filter((i) => i.id !== item.id) : [...selectedItems, item]);
+    setSelectedItems(
+      exists
+        ? selectedItems.filter((i) => i.id !== item.id)
+        : [...selectedItems, item]
+    );
   };
 
-  const pickRandomFromSelection = async () => {
+  const pickRandomFromSelection = () => {
     if (selectedItems.length === 0) return;
-    const randomItem = selectedItems[Math.floor(Math.random() * selectedItems.length)];
+    const randomItem =
+      selectedItems[Math.floor(Math.random() * selectedItems.length)];
     setRandomPick(randomItem);
-
-    // 👇 traer trailer
-    try {
-      const url = await getTrailerUrl(randomItem);
-      setTrailerUrl(url);
-      console.log(url)
-    } catch (error) {
-      console.error('Error al obtener el trailer:', error);
-      setTrailerUrl(null);
-    }
   };
+
   const resetContent = () => {
-setContentList([]);
-  setPage(1);
-  setTotalPages(1); 
-};
+    setRandomPick(null);
+    setSelectedItems([]);
+    refetch(); 
+  };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    resetContent()
+    resetContent();
   };
 
   const handleTypeChange = (type: 'movie' | 'tv') => {
-   setIsTV(type === 'tv');
-  setSelectedGenre(null);
-  setSearchQuery('');
-  resetContent(); // 👈 solo aquí
+    setIsTV(type === 'tv');
+    setSelectedGenre(null);
+    setSearchQuery('');
+    resetContent();
   };
 
   const handleGenreChange = (genreId: number | null) => {
-   setSelectedGenre(genreId);
-  resetContent(); // 🔥 con esto basta
-};
+    setSelectedGenre(genreId);
+    resetContent();
+  };
 
   return {
     contentList,
@@ -92,9 +99,6 @@ setContentList([]);
     setIsTV,
     searchQuery,
     setSearchQuery,
-    page,
-    setPage,
-    totalPages,
     randomPick,
     setRandomPick,
     selectedItems,
@@ -108,6 +112,10 @@ setContentList([]);
     handleGenreChange,
     contentType,
     trailerUrl,
-    resetContent, // 👈 exportamos el trailer
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    totalPages,
+    resetContent,
   };
 }
