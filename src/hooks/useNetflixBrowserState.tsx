@@ -54,8 +54,8 @@ useEffect(() => {
     }
   };
   const resetContent = () => {
-  setPage(1);
-  setContentList([]);
+    setContentList([]);
+    setPage(1);
 };
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
