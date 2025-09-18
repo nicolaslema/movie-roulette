@@ -21,12 +21,12 @@ export function useNetflixBrowserState() {
     fetchGenres(contentType).then(setGenres);
   }, [contentType]);
 
-  useEffect(() => {
-    fetchContent(contentType, page, searchQuery, selectedGenre).then(({ results, totalPages }) => {
-      setContentList(results);
-      setTotalPages(totalPages);
-    });
-  }, [isTV, selectedGenre, searchQuery, page]);
+useEffect(() => {
+  fetchContent(contentType, page, searchQuery, selectedGenre).then(({ results, totalPages }) => {
+    setContentList((prev) => page === 1 ? results : [...prev, ...results]); // 👈 acumulamos
+    setTotalPages(totalPages);
+  });
+}, [isTV, selectedGenre, searchQuery, page]);
 
   const toggleSelection = (item: MovieOrSeries) => {
     const exists = selectedItems.some((i) => i.id === item.id);

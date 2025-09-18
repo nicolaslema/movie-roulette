@@ -2,14 +2,37 @@ import SearchBar from '../SearchBar/SearchBar';
 import GenreSelector from '../GenreSelector/GenreSelector';
 import ContentGrid from '../ContentGrid/ContentGrid';
 import SelectedList from '../SelectedList/SelectedList';
-import PaginationControls from './PaginationControls';
 import RandomPickModal from './RandomPickModal';
 import { useNetflixBrowserState } from '../../hooks/useNetflixBrowserState';
+import { useCallback, useEffect, useRef } from 'react';
 
 export default function NetflixBrowser() {
   const state = useNetflixBrowserState();
-  const filteredContent = state.contentList.filter(item => (item.vote_average ?? 0) >= state.minRating);
+  const loader = useRef<HTMLDivElement | null>(null);
 
+  const handleObserver = useCallback(
+  (entries: IntersectionObserverEntry[]) => {
+      const target = entries[0];
+      if (target.isIntersecting && state.page < state.totalPages) {
+        state.setPage((p) => p + 1);
+      }
+    },
+      [state.page, state.totalPages]
+  );
+
+  useEffect(() => {
+  const option = { root: null, rootMargin: '20px', threshold: 1.0 };
+  const observer = new IntersectionObserver(handleObserver, option);
+  if (loader.current) observer.observe(loader.current);
+
+  return () => {
+    if (loader.current) observer.unobserve(loader.current);
+  };
+  }, [handleObserver]);
+
+  const filteredContent = state.contentList.filter(
+    (item) => (item.vote_average ?? 0) >= state.minRating
+  );
   return (
     <div className="bg-gradient-to-t from-neutral-950/90 to-red-900/60 text-white shadow-lg oxanium-uniquifier px-4 sm:px-6 md:px-12 lg:px-24 xl:px-32">
       <div className="min-h-screen py-8 text-zinc-50 relative transition-colors duration-500 z-2">
@@ -63,7 +86,6 @@ export default function NetflixBrowser() {
             </div>
           )}
 
-
           <ContentGrid
             items={filteredContent}
             selectedItems={state.selectedItems}
@@ -83,16 +105,10 @@ export default function NetflixBrowser() {
             </div>
           )}
 
-          {state.totalPages > 1 && (
-            <div className="mt-8">
-              <PaginationControls
-                page={state.page}
-                totalPages={state.totalPages}
-                onPrev={() => state.setPage((p) => Math.max(p - 1, 1))}
-                onNext={() => state.setPage((p) => Math.min(p + 1, state.totalPages))}
-              />
-            </div>
-          )}
+              <div ref={loader} className="py-8 text-center text-gray-400">
+            {state.page < state.totalPages ? 'Cargando más...' : 'No hay más resultados'}
+          </div>
+
         </div>
       </div>
     </div>
