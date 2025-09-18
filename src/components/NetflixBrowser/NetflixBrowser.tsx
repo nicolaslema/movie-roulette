@@ -81,7 +81,7 @@ export default function NetflixBrowser() {
               <GenreSelector
                 genres={state.genres}
                 selectedGenre={state.selectedGenre}
-                onChange={state.setSelectedGenre}
+                onChange={state.handleGenreChange}
               />
             </div>
           )}

@@ -23,7 +23,7 @@ export function useNetflixBrowserState() {
 
 useEffect(() => {
   fetchContent(contentType, page, searchQuery, selectedGenre).then(({ results, totalPages }) => {
-    setContentList((prev) => page === 1 ? results : [...prev, ...results]); // 👈 acumulamos
+    setContentList((prev) => page === 1 ? results : [...prev, ...results]); // acumular o resetear
     setTotalPages(totalPages);
   });
 }, [isTV, selectedGenre, searchQuery, page]);
@@ -61,6 +61,12 @@ useEffect(() => {
     setSearchQuery('');
   };
 
+  const handleGenreChange = (genreId: number | null) => {
+  setSelectedGenre(genreId);
+  setPage(1);               // 👈 volver a la primera página
+  setContentList([]);       // 👈 limpiar resultados previos
+};
+
   return {
     contentList,
     genres,
@@ -83,6 +89,7 @@ useEffect(() => {
     pickRandomFromSelection,
     handleSearch,
     handleTypeChange,
+    handleGenreChange,
     contentType,
     trailerUrl, // 👈 exportamos el trailer
   };
