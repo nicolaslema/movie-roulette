@@ -17,7 +17,7 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
     <div className="relative">
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-6 ">
         {items.length === 0 ? (
-          <p className="text-center text-gray-400 col-span-full">No se encontraron resultados.</p>
+          <p className="text-center text-gray-400 col-span-full"></p>
         ) : (
           items.map((item, index) => {
             const isSelected = selectedItems.some((i) => i.id === item.id);

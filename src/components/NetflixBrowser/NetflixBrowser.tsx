@@ -105,9 +105,9 @@ export default function NetflixBrowser() {
             </div>
           )}
 
-              <div ref={loader} className="py-8 text-center text-gray-400">
+              {/* <div ref={loader} className="py-8 text-center text-gray-400">
             {state.page < state.totalPages ? 'Cargando más...' : 'No hay más resultados'}
-          </div>
+          </div> */}
 
         </div>
       </div>
