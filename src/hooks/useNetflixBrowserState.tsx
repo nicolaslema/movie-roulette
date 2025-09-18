@@ -23,7 +23,12 @@ export function useNetflixBrowserState() {
 
 useEffect(() => {
   fetchContent(contentType, page, searchQuery, selectedGenre).then(({ results, totalPages }) => {
-    setContentList((prev) => page === 1 ? results : [...prev, ...results]); // acumular o resetear
+    setContentList((prev) => {
+  const merged = page === 1 ? results : [...prev, ...results];
+  return merged.filter(
+    (item: { id: any; }, index: any, self: any[]) => index === self.findIndex((t) => t.id === item.id)
+  );
+});
     setTotalPages(totalPages);
   });
 }, [isTV, selectedGenre, searchQuery, page]);
@@ -67,8 +72,6 @@ useEffect(() => {
 
   const handleGenreChange = (genreId: number | null) => {
   setSelectedGenre(genreId);
-  setPage(1);               // 👈 volver a la primera página
-  setContentList([]);       // 👈 limpiar resultados previos
   resetContent()
 };
 
