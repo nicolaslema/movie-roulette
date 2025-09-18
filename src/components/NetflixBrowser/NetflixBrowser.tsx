@@ -34,8 +34,8 @@ export default function NetflixBrowser() {
     (item) => (item.vote_average ?? 0) >= state.minRating
   );
   return (
-    <div className="bg-gradient-to-t from-neutral-950/90 to-red-900/60 text-white shadow-lg oxanium-uniquifier px-4 sm:px-6 md:px-12 lg:px-24 xl:px-32">
-      <div className="min-h-screen py-8 text-zinc-50 relative transition-colors duration-500 z-2">
+    <div className="bg-gradient-to-t from-neutral-950/90 to-red-900/60 text-white shadow-lg oxanium-uniquifier px-4 sm:px-6 md:px-12 lg:px-24 xl:px-32 ">
+      <div className="min-h-screen py-8 text-zinc-50 relative transition-colors duration-500 z-2 ">
         <div className="z-20">
           <h1 className="text-4xl sm:text-5xl md:text-6xl text-center font-bold mb-10 tracking-tight major-mono-display-regular">
             Movie Roulette

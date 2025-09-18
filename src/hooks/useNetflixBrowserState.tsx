@@ -48,23 +48,28 @@ useEffect(() => {
       setTrailerUrl(null);
     }
   };
+  const resetContent = () => {
+  setPage(1);
+  setContentList([]);
+};
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setPage(1);
+    resetContent()
   };
 
   const handleTypeChange = (type: 'movie' | 'tv') => {
     setIsTV(type === 'tv');
     setSelectedGenre(null);
-    setPage(1);
     setSearchQuery('');
+    resetContent();
   };
 
   const handleGenreChange = (genreId: number | null) => {
   setSelectedGenre(genreId);
   setPage(1);               // 👈 volver a la primera página
   setContentList([]);       // 👈 limpiar resultados previos
+  resetContent()
 };
 
   return {
@@ -91,6 +96,7 @@ useEffect(() => {
     handleTypeChange,
     handleGenreChange,
     contentType,
-    trailerUrl, // 👈 exportamos el trailer
+    trailerUrl,
+    resetContent, // 👈 exportamos el trailer
   };
 }

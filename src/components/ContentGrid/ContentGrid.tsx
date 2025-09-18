@@ -19,17 +19,17 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
         {items.length === 0 ? (
           <p className="text-center text-gray-400 col-span-full">No se encontraron resultados.</p>
         ) : (
-          items.map((item) => {
+          items.map((item, index) => {
             const isSelected = selectedItems.some((i) => i.id === item.id);
 
             return (
               <motion.div
-                key={item.id}
+              key={`${item.id}-${index}`}
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 whileHover={{ scale: 1.05 }}
                 transition={{ duration: 0.3 }}
-                className={`flex flex-col justify-between min-h-[420px] p-4 rounded-xl bg-gradient-to-br from-neutral-800/50 to-neutral-700/50 shadow-xl hover:shadow-2xl transform-gpu ${
+                className={`flex flex-col justify-between min-h-[420px] p-4 rounded-xl bg-gradient-to-br from-neutral-800/50 to-neutral-700/50 shadow-xl hover:shadow-2xl transform-gpu  ${
                   isSelected ? 'border-2 shadow-red-500/20 border-red-500/30' : 'border border-neutral-700/30'
                 }`}
               >
