@@ -89,7 +89,7 @@ export default function ScrambledTitle() {
             });
             return updated;
           });
-        }, 40); // más rápido
+        }, 30); // más rápido
 
         // volver a la normalidad
         setTimeout(() => {
