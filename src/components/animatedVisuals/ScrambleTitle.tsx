@@ -30,7 +30,7 @@ export default function ScrambledTitle() {
     const interval = setInterval(() => {
       // fase de revelado letra por letra
       setDisplayText((prev) =>
-        prev.map((char, i) => {
+        prev.map((_char, i) => {
           if (i < currentIndex) return TARGET_TEXT[i];
           if (TARGET_TEXT[i] === " ") return " ";
           return CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
