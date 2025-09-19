@@ -13,18 +13,15 @@ export function useNetflixBrowserState() {
   const [minRating, setMinRating] = useState<number>(0);
   const contentType: 'movie' | 'tv' = isTV ? 'tv' : 'movie';
   const [releaseDateFrom, setReleaseDateFrom] = useState<string | null>(null);
-const [releaseDateTo, setReleaseDateTo] = useState<string | null>(null);
+  const [releaseDateTo, setReleaseDateTo] = useState<string | null>(null);
 
-  
-
-  // 🔍 Fetch de géneros
+  //  Fetch de géneros
   const { data: genres = [] } = useQuery({
     queryKey: ['genres', contentType],
     queryFn: () => fetchGenres(contentType),
     staleTime: 1000 * 60 * 10,
   });
-
-  // 🎬 Scroll infinito de contenido
+  //  Scroll infinito de contenido
   const {
     data,
     fetchNextPage,
@@ -48,14 +45,14 @@ const [releaseDateTo, setReleaseDateTo] = useState<string | null>(null);
 
   const totalPages = data?.pages[0]?.totalPages ?? 1;
 
-  // 🎥 Trailer del item seleccionado
+  //  Trailer del item seleccionado
   const { data: trailerUrl } = useQuery({
     queryKey: ['trailer', randomPick?.id],
     queryFn: () => getTrailerUrl(randomPick!),
     enabled: !!randomPick,
   });
 
-  // ✅ Acciones
+  //  Acciones
   const toggleSelection = (item: MovieOrSeries) => {
     const exists = selectedItems.some((i) => i.id === item.id);
     setSelectedItems(
@@ -97,12 +94,8 @@ const [releaseDateTo, setReleaseDateTo] = useState<string | null>(null);
   const clearDateFilters = () => {
   setReleaseDateFrom(null);
   setReleaseDateTo(null);
-  refetch(); // vuelve a cargar sin fechas
+  refetch(); 
 };
-
-
-
-
 
   return {
     contentList,

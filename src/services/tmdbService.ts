@@ -8,8 +8,6 @@ const LANGUAGE = 'es';
 const REGION = 'AR';
 const PROVIDER_ID = 8; // Netflix
 
-
-
 export const fetchGenres = async (type: 'movie' | 'tv') => {
   const response = await fetch(`${BASE_URL}/genre/${type}/list?api_key=${API_KEY}&language=${LANGUAGE}`);
   const data = await response.json();
@@ -29,7 +27,6 @@ export async function getTrailerUrl(item: MovieOrSeries): Promise<string | null>
 
   return trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
 }
-
 
 export const fetchContent = async (
   type: 'movie' | 'tv',

@@ -7,8 +7,6 @@ import HeaderControls from './HeaderControls';
 import ScrambledTitle from '../animatedVisuals/ScrambleTitle';
 import { FaAngleDoubleDown } from "react-icons/fa";
 
-
-
 export default function NetflixBrowser() {
   const state = useNetflixBrowserState();
   const loaderRef = useRef<HTMLDivElement | null>(null);
@@ -44,7 +42,7 @@ export default function NetflixBrowser() {
         <div className="z-20">
         
           <div className='mt-8 mb-16 h-[75vh]'>
-            <ScrambledTitle/>
+            <ScrambledTitle targetText='Movie Roulette'/>
           {/* Header Controls */}
         <HeaderControls state={state}/>
           <div className='flex-col flex justify-center items-center mt-24'><h1 className='text-2xl'>View all</h1> <span><FaAngleDoubleDown/></span></div>

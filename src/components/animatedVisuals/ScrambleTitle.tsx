@@ -1,27 +1,28 @@
-"use client";
-
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 
-const TARGET_TEXT = "Movie Roulette";
+interface targetText {
+  targetText: string;
+}
+
 const CHARACTERS =
   "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()-_=+<>?/|";
 
-export default function ScrambledTitle() {
+export default function ScrambledTitle({targetText}:targetText) {
   const [displayText, setDisplayText] = useState<string[]>([]);
   const [resolved, setResolved] = useState<boolean[]>([]);
   const [glitchingIndexes, setGlitchingIndexes] = useState<number[]>([]);
   const [hoveringIndex, setHoveringIndex] = useState<number | null>(null);
 
-  // 🔑 intervalos de hover persistentes
+  // intervalos de hover persistentes
   const hoverIntervals = useRef<{ [key: number]: NodeJS.Timeout }>({});
 
   useEffect(() => {
-    const initial = Array.from(TARGET_TEXT).map((c) =>
+    const initial = Array.from(targetText).map((c) =>
       c === " " ? " " : CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)]
     );
     setDisplayText(initial);
-    setResolved(Array(TARGET_TEXT.length).fill(false));
+    setResolved(Array(targetText.length).fill(false));
 
     const scramblesPerLetter = 6;
     let currentIndex = 0;
@@ -31,8 +32,8 @@ export default function ScrambledTitle() {
       // fase de revelado letra por letra
       setDisplayText((prev) =>
         prev.map((_char, i) => {
-          if (i < currentIndex) return TARGET_TEXT[i];
-          if (TARGET_TEXT[i] === " ") return " ";
+          if (i < currentIndex) return targetText[i];
+          if (targetText[i] === " ") return " ";
           return CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
         })
       );
@@ -48,18 +49,18 @@ export default function ScrambledTitle() {
 
         setDisplayText((prev) => {
           const updated = [...prev];
-          updated[currentIndex] = TARGET_TEXT[currentIndex];
+          updated[currentIndex] = targetText[currentIndex];
           return updated;
         });
 
         currentIndex += 1;
         scrambleCount = 0;
 
-        // ✅ Fix: cuando termina, fuerza la palabra final completa
-        if (currentIndex >= TARGET_TEXT.length) {
+        //  Fix: cuando termina, fuerza la palabra final completa
+        if (currentIndex >= targetText.length) {
           clearInterval(interval);
-          setDisplayText(Array.from(TARGET_TEXT));
-          setResolved(Array(TARGET_TEXT.length).fill(true));
+          setDisplayText(Array.from(targetText));
+          setResolved(Array(targetText.length).fill(true));
 
           // arranca glitches aleatorios
           startRandomGlitching();
@@ -73,9 +74,9 @@ export default function ScrambledTitle() {
         const glitchIndexes: number[] = [];
 
         while (glitchIndexes.length < glitchCount) {
-          const randIndex = Math.floor(Math.random() * TARGET_TEXT.length);
+          const randIndex = Math.floor(Math.random() * targetText.length);
           if (
-            TARGET_TEXT[randIndex] !== " " &&
+            targetText[randIndex] !== " " &&
             !glitchIndexes.includes(randIndex)
           ) {
             glitchIndexes.push(randIndex);
@@ -100,7 +101,7 @@ export default function ScrambledTitle() {
           setDisplayText((prev) => {
             const updated = [...prev];
             glitchIndexes.forEach((i) => {
-              updated[i] = TARGET_TEXT[i];
+              updated[i] = targetText[i];
             });
             return updated;
           });
@@ -112,7 +113,7 @@ export default function ScrambledTitle() {
     return () => clearInterval(interval);
   }, []);
 
-  // 🔥 Hover glitch violento
+  // Hover glitch
   const handleMouseEnter = (index: number) => {
     setHoveringIndex(index);
 
@@ -136,7 +137,7 @@ export default function ScrambledTitle() {
     // volver a la letra correcta
     setDisplayText((prev) => {
       const updated = [...prev];
-      updated[index] = TARGET_TEXT[index];
+      updated[index] = targetText[index];
       return updated;
     });
   };
