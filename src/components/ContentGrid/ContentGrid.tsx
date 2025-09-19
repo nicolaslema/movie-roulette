@@ -43,13 +43,12 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
     />
   )}
   {/* Degradado superior + título */}
-<div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-black via-black/20 to-transparent z-10 px-4 pt-4 flex items-start">
-  <div className="absolute top-0 left-0 w-full mt-8 px-4 pb-24 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-  <h4 className="text-white text-xl font-semibold drop-shadow-md truncate ">
+<div className="absolute top-0 left-0 w-full h-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 bg-gradient-to-b from-black via-black/20 to-transparent px-4 pt-4 flex items-start">
+  <h4 className="text-white text-xl font-semibold drop-shadow-md truncate mt-8">
     {item.title || item.name}
   </h4>
 </div>
-</div>
+
 
   {/* Título al hacer hover */}
 
