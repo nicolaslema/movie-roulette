@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { fetchGenres, fetchContent, getTrailerUrl } from '../services/tmdbService';
 import type { MovieOrSeries } from '../types/MovieTypes';
+export type ReturnTypeOfUseNetflixBrowserState = ReturnType<typeof useNetflixBrowserState>;
 
 export function useNetflixBrowserState() {
   const [selectedGenre, setSelectedGenre] = useState<number | null>(null);
@@ -11,6 +12,7 @@ export function useNetflixBrowserState() {
   const [selectedItems, setSelectedItems] = useState<MovieOrSeries[]>([]);
   const [minRating, setMinRating] = useState<number>(0);
   const contentType: 'movie' | 'tv' = isTV ? 'tv' : 'movie';
+  
 
   // 🔍 Fetch de géneros
   const { data: genres = [] } = useQuery({
@@ -69,7 +71,6 @@ export function useNetflixBrowserState() {
 
   const resetContent = () => {
     setRandomPick(null);
-    setSelectedItems([]);
     refetch(); 
   };
 

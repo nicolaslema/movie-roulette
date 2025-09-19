@@ -31,26 +31,6 @@ export async function getTrailerUrl(item: MovieOrSeries): Promise<string | null>
 }
 
 
-export const getMovies = async (  searchQuery: string,  type: 'movie' | 'tv',)=>{
-    const baseParams = `api_key=${API_KEY}&language=${LANGUAGE}`;
-
-  let url = '';
-  if (searchQuery.trim()) {
-    url = `${BASE_URL}/search/${type}?${baseParams}&query=${encodeURIComponent(searchQuery)}`;
-  } else {
-    url = `${BASE_URL}/discover/${type}?${baseParams}&with_watch_providers=${PROVIDER_ID}&watch_region=${REGION}&sort_by=popularity.desc`;
-
-  }
-
-  const response = await fetch(url);
-  const data = await response.json();
-  return {
-    results: data.results
-  };
-}
-
-
-
 export const fetchContent = async (
   type: 'movie' | 'tv',
   page: number,

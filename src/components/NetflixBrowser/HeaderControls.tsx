@@ -1,99 +1,73 @@
-import { motion } from 'framer-motion';
-import { FaFilm, FaTv, FaSearch, FaTags } from 'react-icons/fa';
+// src/components/HeaderControls/HeaderControls.tsx
+import { FaFilm, FaTv } from 'react-icons/fa';
+import { MdFilterList } from 'react-icons/md';
 import SearchBar from '../SearchBar/SearchBar';
 import GenreSelector from '../GenreSelector/GenreSelector';
-import type { Genre } from '../../types/MovieTypes';
+import type { ReturnTypeOfUseNetflixBrowserState } from '../../hooks/useNetflixBrowserState';
 
-interface Props {
-  isTV: boolean;
-  onTypeChange: (type: 'movie' | 'tv') => void;
-  searchQuery: string;
-  onSearchChange: (query: string) => void;
-  onSearchSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  genres: Genre[];
-  selectedGenre: number | null;
-  onGenreChange: (id: number | null) => void;
-}
+type Props = {
+  state: ReturnTypeOfUseNetflixBrowserState;
+};
 
-export default function HeaderControls({
-  isTV,
-  onTypeChange,
-  searchQuery,
-  onSearchChange,
-  onSearchSubmit,
-  genres,
-  selectedGenre,
-  onGenreChange,
-}: Props) {
+export default function HeaderControls({ state }: Props) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="mb-8 z-10"
-    >
-      {/* Navegación de tipo */}
-      <div className="flex gap-4 mb-6">
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onTypeChange('movie')}
-          disabled={!isTV}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition transform-gpu ${
-            isTV
-              ? 'bg-red-600/30 hover:bg-red-700/40 text-white'
-              : 'bg-neutral-700/50 text-gray-400 cursor-not-allowed'
-          }`}
-        >
-          <FaFilm />
-          Películas
-        </motion.button>
-
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          onClick={() => onTypeChange('tv')}
-          disabled={isTV}
-          className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-semibold transition transform-gpu ${
-            isTV
-              ? 'bg-neutral-700/30 text-gray-400 cursor-not-allowed'
-              : 'bg-red-600/50 hover:bg-red-700/40 text-white'
-          }`}
-        >
-          <FaTv />
-          Series
-        </motion.button>
+    <div className="w-full mb-10 rounded-xl bg-gradient-to-br from-zinc-900/30 via-zinc-950/30 to-zinc/30 border border-zinc-700/40 shadow-lg p-6 flex flex-col gap-6 md:gap-8">
+      {/* Search */}
+      <div className="w-full">
+        <SearchBar
+          query={state.searchQuery}
+          onChange={state.setSearchQuery}
+          onSubmit={state.handleSearch}
+        />
       </div>
 
-      {/* Buscador */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2, duration: 0.4 }}
-        className="mb-6"
-      >
-        <div className="flex items-center gap-3 bg-neutral-800/40 px-4 py-2 rounded-lg shadow-md">
-          <FaSearch className="text-white opacity-70" />
-          <SearchBar query={searchQuery} onChange={onSearchChange} onSubmit={onSearchSubmit} />
-        </div>
-      </motion.div>
+      {/* Type Switch */}
+      <div className="flex flex-wrap items-center justify-start gap-4">
+        <span className="text-sm font-semibold text-zinc-300 uppercase tracking-wide">
+          Tipo de contenido:
+        </span>
 
-      {/* Selector de géneros */}
-      {!searchQuery && (
-        <motion.div
-          initial={{ opacity: 0, y: -10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3, duration: 0.4 }}
-          className="mb-6"
+        <button
+          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition ${
+            state.isTV
+              ? 'bg-neutral-800/80 hover:bg-neutral-900/90 text-white border border-zinc-500/30'
+              : 'bg-neutral-900/80 opacity-60 cursor-not-allowed text-zinc-400'
+          }`}
+          onClick={() => state.handleTypeChange('movie')}
+          disabled={!state.isTV}
         >
-          <div className="flex items-center gap-3 bg-neutral-800/40 px-4 py-2 rounded-lg shadow-md">
-            <FaTags className="text-white opacity-70" />
-            <GenreSelector
-              genres={genres}
-              selectedGenre={selectedGenre}
-              onChange={onGenreChange}
-            />
+          <FaFilm className="text-red-400" />
+          Películas
+        </button>
+
+        <button
+          className={`flex items-center gap-2 px-5 py-2 rounded-full text-sm font-medium transition ${
+            state.isTV
+              ? 'bg-gray-800/80 opacity-60 cursor-not-allowed text-zinc-400'
+              : 'bg-neutral-900/80 hover:bg-neutral-800/80 text-white border border-zinc-500/30'
+          }`}
+          onClick={() => state.handleTypeChange('tv')}
+          disabled={state.isTV}
+        >
+          <FaTv className="text-blue-400" />
+          Series
+        </button>
+      </div>
+
+      {/* Genre Selector */}
+      {!state.searchQuery && (
+        <div className="flex flex-col gap-2">
+          <div className="flex items-center gap-2 text-sm font-semibold text-zinc-300 uppercase tracking-wide">
+            <MdFilterList className="text-green-400" />
+            Filtro por género:
           </div>
-        </motion.div>
+          <GenreSelector
+            genres={state.genres}
+            selectedGenre={state.selectedGenre}
+            onChange={state.handleGenreChange}
+          />
+        </div>
       )}
-    </motion.div>
+    </div>
   );
 }
