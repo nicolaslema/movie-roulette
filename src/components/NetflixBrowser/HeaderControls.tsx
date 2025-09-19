@@ -5,6 +5,9 @@ import SearchBar from '../SearchBar/SearchBar';
 import GenreSelector from '../GenreSelector/GenreSelector';
 import DatePicker from '../DatePicker/DatePicker';
 import type { ReturnTypeOfUseNetflixBrowserState } from '../../hooks/useNetflixBrowserState';
+import FilmStripByGenre from '../animatedVisuals/FilmStripMotion';
+import { useMemo } from 'react';
+
 
 
 
@@ -13,6 +16,22 @@ type Props = {
 };
 
 export default function HeaderControls({ state }: Props) {
+const defaultSelection = useMemo(() => {
+  const shuffled = [...state.contentList].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, 20);
+}, [state.contentList]);
+
+const filteredByGenre = useMemo(() => {
+  if (!state.selectedGenre) return defaultSelection;
+
+  return state.contentList
+    .filter((movie) => movie.genre_ids?.includes(state.selectedGenre))
+    .filter((movie) => movie.release_date)
+    .sort((a, b) => new Date(b.release_date).getTime() - new Date(a.release_date).getTime())
+    .slice(0, 10);
+}, [state.selectedGenre, state.contentList, defaultSelection]);
+
+
   return (
     <div className="w-full mb-10 rounded-xl bg-gradient-to-br from-zinc-900/30 via-zinc-950/30 to-zinc-900/30 border border-zinc-700/40 shadow-lg px-6 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -108,7 +127,13 @@ export default function HeaderControls({ state }: Props) {
         {/* 🎨 Columna derecha: espacio visual */}
         <div className="flex items-center justify-center min-h-[280px] border border-zinc-700/30 rounded-xl bg-gradient-to-br from-neutral-900/40 to-neutral-800/30 text-zinc-500 text-sm italic">
           {/* Aquí podés insertar shaders, animaciones, previews, etc. */}
-         
+   {filteredByGenre.length > 0 ? (
+    <FilmStripByGenre movies={filteredByGenre} />
+  ) : (
+    <div className="text-zinc-500 italic text-sm">No hay películas disponibles</div>
+  )}
+
+
         </div>
       </div>
     </div>
