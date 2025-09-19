@@ -33,7 +33,7 @@ const filteredByGenre = useMemo(() => {
 
 
   return (
-    <div className="w-full mb-10 rounded-xl bg-gradient-to-br from-zinc-900/30 via-zinc-950/30 to-zinc-900/30 border border-zinc-700/40 shadow-lg px-6 py-8">
+    <div className="w-full mb-10 rounded-xl mt-16 bg-gradient-to-br from-zinc-900/30 via-zinc-950/30 to-zinc-900/30 border border-zinc-700/40 shadow-lg px-6 py-8">
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* 🧭 Columna izquierda: controles */}
         <div className="flex flex-col gap-6">

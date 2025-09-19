@@ -5,6 +5,7 @@ import { useNetflixBrowserState } from '../../hooks/useNetflixBrowserState';
 import { useRef, useEffect, useCallback } from 'react';
 import HeaderControls from './HeaderControls';
 import ScrambledTitle from '../animatedVisuals/ScrambleTitle';
+import { FaAngleDoubleDown } from "react-icons/fa";
 
 
 
@@ -42,10 +43,13 @@ export default function NetflixBrowser() {
       <div className="min-h-screen py-8 text-zinc-50 relative transition-colors duration-500 z-2">
         <div className="z-20">
         
-          <div className='mt-8 mb-16'> <ScrambledTitle/></div>
-       
+          <div className='mt-8 mb-16 h-[75vh]'>
+            <ScrambledTitle/>
           {/* Header Controls */}
         <HeaderControls state={state}/>
+          <div className='flex-col flex justify-center items-center mt-24'><h1 className='text-2xl'>View all</h1> <span><FaAngleDoubleDown/></span></div>
+          
+          </div>
  
           {/* Content */}
           <ContentGrid
