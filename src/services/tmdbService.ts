@@ -35,17 +35,27 @@ export const fetchContent = async (
   type: 'movie' | 'tv',
   page: number,
   searchQuery: string,
-  genreId: number | null
+  genreId: number | null,
+  releaseDateFrom?: string,
+  releaseDateTo?: string
 ) => {
   const baseParams = `api_key=${API_KEY}&language=${LANGUAGE}&page=${page}`;
-
   let url = '';
+
   if (searchQuery.trim()) {
     url = `${BASE_URL}/search/${type}?${baseParams}&query=${encodeURIComponent(searchQuery)}`;
   } else {
     url = `${BASE_URL}/discover/${type}?${baseParams}&with_watch_providers=${PROVIDER_ID}&watch_region=${REGION}&sort_by=popularity.desc`;
-    if (genreId) {
-      url += `&with_genres=${genreId}`;
+    if (genreId) url += `&with_genres=${genreId}`;
+    if (releaseDateFrom) {
+      url += type === 'movie'
+        ? `&primary_release_date.gte=${releaseDateFrom}`
+        : `&first_air_date.gte=${releaseDateFrom}`;
+    }
+    if (releaseDateTo) {
+      url += type === 'movie'
+        ? `&primary_release_date.lte=${releaseDateTo}`
+        : `&first_air_date.lte=${releaseDateTo}`;
     }
   }
 

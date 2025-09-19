@@ -12,6 +12,9 @@ export function useNetflixBrowserState() {
   const [selectedItems, setSelectedItems] = useState<MovieOrSeries[]>([]);
   const [minRating, setMinRating] = useState<number>(0);
   const contentType: 'movie' | 'tv' = isTV ? 'tv' : 'movie';
+  const [releaseDateFrom, setReleaseDateFrom] = useState<string | null>(null);
+const [releaseDateTo, setReleaseDateTo] = useState<string | null>(null);
+
   
 
   // 🔍 Fetch de géneros
@@ -29,9 +32,9 @@ export function useNetflixBrowserState() {
     isFetchingNextPage,
     refetch,
   } = useInfiniteQuery({
-    queryKey: ['content', contentType, searchQuery, selectedGenre],
+    queryKey: ['content', contentType, searchQuery, selectedGenre,releaseDateFrom, releaseDateTo],
     queryFn: ({ pageParam = 1 }: { pageParam?: number }) =>
-      fetchContent(contentType, pageParam as number, searchQuery, selectedGenre),
+      fetchContent(contentType, pageParam as number, searchQuery, selectedGenre, releaseDateFrom ?? undefined, releaseDateTo ?? undefined),
     getNextPageParam: (lastPage: { totalPages: number }, allPages) => {
       const nextPage = allPages.length + 1;
       return nextPage <= lastPage.totalPages ? nextPage : undefined;
@@ -91,10 +94,21 @@ export function useNetflixBrowserState() {
     resetContent();
   };
 
+  const clearDateFilters = () => {
+  setReleaseDateFrom(null);
+  setReleaseDateTo(null);
+  refetch(); // vuelve a cargar sin fechas
+};
+
+
+
+
+
   return {
     contentList,
     genres,
     selectedGenre,
+
     setSelectedGenre,
     isTV,
     setIsTV,
@@ -118,5 +132,11 @@ export function useNetflixBrowserState() {
     isFetchingNextPage,
     totalPages,
     resetContent,
+    releaseDateFrom,
+    releaseDateTo,
+    setReleaseDateFrom,
+    setReleaseDateTo,
+    clearDateFilters
+
   };
 }
