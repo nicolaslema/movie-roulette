@@ -5,7 +5,7 @@ import SearchBar from '../SearchBar/SearchBar';
 import GenreSelector from '../GenreSelector/GenreSelector';
 import DatePicker from '../DatePicker/DatePicker';
 import type { ReturnTypeOfUseNetflixBrowserState } from '../../hooks/useNetflixBrowserState';
-import ShaderPlane from '../../shaders/FilmStripShader';
+
 
 
 type Props = {
@@ -108,7 +108,7 @@ export default function HeaderControls({ state }: Props) {
         {/* 🎨 Columna derecha: espacio visual */}
         <div className="flex items-center justify-center min-h-[280px] border border-zinc-700/30 rounded-xl bg-gradient-to-br from-neutral-900/40 to-neutral-800/30 text-zinc-500 text-sm italic">
           {/* Aquí podés insertar shaders, animaciones, previews, etc. */}
-          <ShaderPlane/>
+         
         </div>
       </div>
     </div>
