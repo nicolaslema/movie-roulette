@@ -13,7 +13,7 @@ export default function ScrambledTitle() {
   const [glitchingIndexes, setGlitchingIndexes] = useState<number[]>([]);
   const [hoveringIndex, setHoveringIndex] = useState<number | null>(null);
 
-  // 🔑 useRef para intervalos de hover persistentes
+  // 🔑 intervalos de hover persistentes
   const hoverIntervals = useRef<{ [key: number]: NodeJS.Timeout }>({});
 
   useEffect(() => {
@@ -30,7 +30,7 @@ export default function ScrambledTitle() {
     const interval = setInterval(() => {
       // fase de revelado letra por letra
       setDisplayText((prev) =>
-        prev.map((_char, i) => {
+        prev.map((char, i) => {
           if (i < currentIndex) return TARGET_TEXT[i];
           if (TARGET_TEXT[i] === " ") return " ";
           return CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
@@ -55,8 +55,13 @@ export default function ScrambledTitle() {
         currentIndex += 1;
         scrambleCount = 0;
 
+        // ✅ Fix: cuando termina, fuerza la palabra final completa
         if (currentIndex >= TARGET_TEXT.length) {
           clearInterval(interval);
+          setDisplayText(Array.from(TARGET_TEXT));
+          setResolved(Array(TARGET_TEXT.length).fill(true));
+
+          // arranca glitches aleatorios
           startRandomGlitching();
         }
       }
@@ -64,7 +69,7 @@ export default function ScrambledTitle() {
 
     const startRandomGlitching = () => {
       setInterval(() => {
-        const glitchCount = Math.floor(Math.random() * 4) + 1; // 1 a 4 letras
+        const glitchCount = Math.floor(Math.random() * 3) + 1; // 1 a 3 letras
         const glitchIndexes: number[] = [];
 
         while (glitchIndexes.length < glitchCount) {
@@ -77,7 +82,6 @@ export default function ScrambledTitle() {
           }
         }
 
-        // aplicar glitch
         setGlitchingIndexes(glitchIndexes);
 
         const glitchInterval = setInterval(() => {
@@ -89,9 +93,8 @@ export default function ScrambledTitle() {
             });
             return updated;
           });
-        }, 30); // más rápido
+        }, 30);
 
-        // volver a la normalidad
         setTimeout(() => {
           clearInterval(glitchInterval);
           setDisplayText((prev) => {
@@ -102,7 +105,7 @@ export default function ScrambledTitle() {
             return updated;
           });
           setGlitchingIndexes([]);
-        }, 300); // un poco más largo para dar caos
+        }, 300);
       }, 1200 + Math.random() * 2000);
     };
 
@@ -122,7 +125,7 @@ export default function ScrambledTitle() {
           CHARACTERS[Math.floor(Math.random() * CHARACTERS.length)];
         return updated;
       });
-    }, 50); // aún más rápido
+    }, 30);
   };
 
   const handleMouseLeave = (index: number) => {
