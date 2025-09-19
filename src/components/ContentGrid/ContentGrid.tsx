@@ -31,7 +31,7 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
   whileHover={{  }}
   transition={{ duration: 0.3 }}
   className={`relative rounded-xl overflow-hidden shadow-2xl transform-gpu min-h-[420px] group hover:shadow-neutral-200/10 ${
-    isSelected ? 'border-2 shadow-neutral-100/10 border-red-900/30 ' : 'border border-neutral-700/30'
+    isSelected ? 'border-2 shadow-neutral-100/10 border-neutral-100/30 ' : 'border border-neutral-700/30'
   }`}
 >
   {/* Fondo con imagen */}
@@ -63,7 +63,7 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
       className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
         isSelected
           ? 'bg-red-500/30 hover:bg-red-700/30 text-white'
-          : 'bg-neutral-900/30 hover:bg-green-700/30 text-white'
+          : 'bg-neutral-900/30 hover:bg-neutral-700/60 text-white'
       }`}
     >
       {isSelected ? <FaMinus /> : <FaPlus />}
@@ -73,7 +73,7 @@ export default function ContentGrid({ items, selectedItems, toggleSelection }: P
     <motion.button
       onClick={() => setSelectedDetail(item)}
       whileTap={{ scale: 0.95 }}
-      className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-blue-800/30 hover:bg-blue-700/50 text-white transition"
+      className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-neutral-400/30 hover:bg-neutral-100/30 text-white transition"
     >
       <FaInfoCircle />
       Ver detalles
