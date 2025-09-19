@@ -64,7 +64,7 @@ export default function ScrambledTitle() {
 
     const startRandomGlitching = () => {
       setInterval(() => {
-        const glitchCount = Math.floor(Math.random() * 3) + 1; // 1 a 3 letras
+        const glitchCount = Math.floor(Math.random() * 4) + 1; // 1 a 4 letras
         const glitchIndexes: number[] = [];
 
         while (glitchIndexes.length < glitchCount) {
@@ -89,7 +89,7 @@ export default function ScrambledTitle() {
             });
             return updated;
           });
-        }, 30); // más rápido
+        }, 40); // más rápido
 
         // volver a la normalidad
         setTimeout(() => {
