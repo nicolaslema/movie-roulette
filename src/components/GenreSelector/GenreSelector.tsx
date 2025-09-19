@@ -17,7 +17,7 @@ export default function GenreSelector({ genres, selectedGenre, onChange }: Props
   return (
     <div className="relative w-full max-w-sm">
       <Listbox value={selectedGenre} onChange={onChange}>
-        {({ open }) => (
+        {({ }) => (
           <>
             <Listbox.Button className="relative w-full cursor-pointer rounded-xl bg-neutral-900/70 py-2 pl-4 pr-10 text-left text-white border border-zinc-600/40 shadow-md hover:border-zinc-400/50 transition">
               <span className="block truncate">

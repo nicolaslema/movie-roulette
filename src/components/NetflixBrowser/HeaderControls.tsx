@@ -5,7 +5,6 @@ import SearchBar from '../SearchBar/SearchBar';
 import GenreSelector from '../GenreSelector/GenreSelector';
 import DatePicker from '../DatePicker/DatePicker';
 import type { ReturnTypeOfUseNetflixBrowserState } from '../../hooks/useNetflixBrowserState';
-import { Canvas } from '@react-three/fiber';
 import ShaderPlane from '../../shaders/FilmStripShader';
 
 
