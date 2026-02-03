@@ -29,7 +29,7 @@ export default function ScrambledTitle({targetText}:targetText) {
     let scrambleCount = 0;
 
     const interval = setInterval(() => {
-      // fase de revelado letra por letra
+      // revelado letra por letra
       setDisplayText((prev) =>
         prev.map((_char, i) => {
           if (i < currentIndex) return targetText[i];
