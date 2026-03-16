@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { MovieOrSeries } from '../../types/MovieTypes';
 
@@ -11,7 +11,6 @@ interface Props {
 const CARD_WIDTH = 136;
 const CARD_GAP = 12;
 const STRIDE = CARD_WIDTH + CARD_GAP;
-const VIEWPORT_WIDTH = 680;
 
 function buildTrack(pool: MovieOrSeries[], pick: MovieOrSeries) {
   const base = pool.length > 0 ? pool : [pick];
@@ -33,10 +32,12 @@ function buildTrack(pool: MovieOrSeries[], pick: MovieOrSeries) {
 }
 
 export default function RandomPickModal({ pick, pool, onClose }: Props) {
+  const viewportRef = useRef<HTMLDivElement | null>(null);
   const [track, setTrack] = useState<MovieOrSeries[]>([]);
   const [targetIndex, setTargetIndex] = useState(0);
   const [xPos, setXPos] = useState(0);
   const [animationDone, setAnimationDone] = useState(false);
+  const [isRolling, setIsRolling] = useState(false);
 
   useEffect(() => {
     if (!pick) return;
@@ -46,10 +47,13 @@ export default function RandomPickModal({ pick, pool, onClose }: Props) {
     setTargetIndex(nextTarget);
     setXPos(0);
     setAnimationDone(false);
+    setIsRolling(false);
 
     const frame = requestAnimationFrame(() => {
+      const viewportWidth = viewportRef.current?.clientWidth ?? 680;
       const center = nextTarget * STRIDE + CARD_WIDTH / 2;
-      const end = -(center - VIEWPORT_WIDTH / 2);
+      const end = -(center - viewportWidth / 2);
+      setIsRolling(true);
       setXPos(end);
     });
 
@@ -86,19 +90,55 @@ export default function RandomPickModal({ pick, pool, onClose }: Props) {
             </button>
           </div>
 
-          <div className="relative mx-auto w-full max-w-[680px] overflow-hidden rounded-2xl border border-zinc-700/60 bg-black/35 px-2 py-5">
-            <div className="pointer-events-none absolute left-1/2 top-2 z-20 h-[calc(100%-1rem)] -translate-x-1/2 border-l-4 border-dashed border-amber-300" />
+          <div
+            ref={viewportRef}
+            className="relative mx-auto w-full max-w-[680px] overflow-hidden rounded-2xl border border-zinc-700/60 bg-black/35 px-2 py-5"
+          >
+            <div className="pointer-events-none absolute inset-y-2 left-1/2 z-30 -translate-x-1/2">
+              <div className="absolute inset-y-0 left-1/2 w-[3px] -translate-x-1/2 rounded-full bg-gradient-to-b from-transparent via-cyan-300 to-transparent shadow-[0_0_14px_rgba(34,211,238,0.85)]" />
+              <div className="absolute -top-1 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 rounded-[2px] border border-cyan-200/80 bg-cyan-300/60 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
+              <div className="absolute -bottom-1 left-1/2 h-3 w-3 -translate-x-1/2 rotate-45 rounded-[2px] border border-cyan-200/80 bg-cyan-300/60 shadow-[0_0_10px_rgba(34,211,238,0.7)]" />
+            </div>
 
             <motion.div
               className="flex"
-              animate={{ x: [0, xPos + 20, xPos] }}
-              transition={{ duration: 6.2, ease: [0.05, 0.92, 0.14, 1], times: [0, 0.93, 1] }}
-              onAnimationComplete={() => setAnimationDone(true)}
+              animate={{ x: xPos }}
+              transition={{ duration: 6, ease: [0.08, 0.86, 0.18, 1] }}
+              onAnimationComplete={() => {
+                if (isRolling) {
+                  setAnimationDone(true);
+                  setIsRolling(false);
+                }
+              }}
               style={{ gap: `${CARD_GAP}px` }}
             >
               {track.map((item, idx) => (
-                <article
+                <motion.article
                   key={`${item.id}-${idx}`}
+                  animate={
+                    idx === targetIndex && animationDone
+                      ? {
+                          scale: [1, 1.02, 1],
+                          boxShadow: [
+                            '0 0 0 rgba(251,191,36,0)',
+                            '0 0 14px rgba(251,191,36,0.42), 0 0 24px rgba(249,115,22,0.22)',
+                            '0 0 0 rgba(251,191,36,0)',
+                          ],
+                        }
+                      : {
+                          scale: 1,
+                          boxShadow: '0 0 0 rgba(0,0,0,0)',
+                        }
+                  }
+                  transition={
+                    idx === targetIndex && animationDone
+                      ? {
+                          duration: 1.6,
+                          repeat: Infinity,
+                          ease: 'easeInOut',
+                        }
+                      : { duration: 0.2 }
+                  }
                   className={`w-[136px] shrink-0 overflow-hidden rounded-xl border bg-zinc-900/80 ${
                     idx === targetIndex ? 'border-amber-300/80' : 'border-zinc-700/70'
                   }`}
@@ -117,18 +157,29 @@ export default function RandomPickModal({ pick, pool, onClose }: Props) {
                   <div className="line-clamp-2 min-h-[3rem] p-2 text-xs font-semibold text-zinc-100">
                     {item.title || item.name}
                   </div>
-                </article>
+                </motion.article>
               ))}
             </motion.div>
           </div>
 
           {animationDone ? (
-            <div className="mt-5 rounded-2xl border border-zinc-700/60 bg-zinc-900/70 px-4 py-3">
+            <motion.div
+              className="mt-5 rounded-2xl border border-amber-300/35 bg-zinc-900/70 px-4 py-3"
+              initial={{
+                boxShadow: '0 0 0 rgba(251,191,36,0)',
+              }}
+              animate={{
+                boxShadow: '0 0 16px rgba(251,191,36,0.28), 0 0 30px rgba(249,115,22,0.18)',
+              }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
               <p className="text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
                 Resultado final
               </p>
-              <h4 className="text-xl font-semibold text-amber-100">{pick.title || pick.name}</h4>
-            </div>
+              <h4 className="text-xl font-semibold text-amber-100">
+                {pick.title || pick.name}
+              </h4>
+            </motion.div>
           ) : (
             <div className="mt-5 rounded-2xl border border-zinc-700/40 bg-zinc-900/40 px-4 py-3 text-sm text-zinc-500">
               Resolviendo resultado...
