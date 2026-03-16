@@ -1,7 +1,5 @@
-import { useState, useEffect } from 'react';
 import type { MovieOrSeries } from '../../types/MovieTypes';
-import { IoIosArrowDroprightCircle } from "react-icons/io";
-import { FaDiceFive } from "react-icons/fa";
+import { FaDiceFive, FaTrash, FaXmark } from 'react-icons/fa6';
 
 type Props = {
   items: MovieOrSeries[];
@@ -10,130 +8,79 @@ type Props = {
   onPickRandom: () => void;
 };
 
-const DESKTOP_BREAKPOINT = 1280;
-
 export default function SelectedList({ items, onRemove, onClear, onPickRandom }: Props) {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    const updateDevice = () => {
-      const mobile = window.innerWidth < DESKTOP_BREAKPOINT;
-      setIsMobile(mobile);
-      setIsOpen(!mobile); // abrir automáticamente en desktop
-    };
-    updateDevice();
-    window.addEventListener('resize', updateDevice);
-    return () => window.removeEventListener('resize', updateDevice);
-  }, []);
-
   return (
-    <>
-      {/* Botón flotante para abrir en mobile y desktop */}
-      {(isMobile && !isOpen) || (!isMobile && !isOpen) ? (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 z-[999] bg-[#142b397d] text-white px-4 py-2 rounded-full shadow-xl"
-        >
-          📂 Abrir lista
-        </button>
-      ) : null}
-
-      {/* Overlay solo en mobile */}
-      {isMobile && isOpen && (
-        <div
-          onClick={() => setIsOpen(false)}
-          className="fixed inset-0 bg-black/50 z-[998]"
-        />
-      )}
-
-      {/* Panel lateral */}
-      <div
-        className={`fixed top-0 right-0 h-screen w-80 p-6 border-l border-neutral-400/30 bg-neutral-900/30 backdrop-blur-lg text-white overflow-y-scroll scrollbar-hide shadow-2xl z-[1000] transition-transform duration-300
-          ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-          ${!isMobile ? 'translate-x-0' : ''}`}
-      >
-        <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold">🎞️ Mi lista</h3>
-          {/* Botón cerrar en mobile */}
-          {isMobile && (
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white text-2xl font-bold"
-              title="Cerrar"
-            >
-              ×
-            </button>
-          )}
-          {/* Botón colapsar en desktop */}
-          {!isMobile && (
-            <button
-              onClick={() => setIsOpen(false)}
-              className="text-white text-xl font-bold hover:text-red-400 transition"
-              title="Colapsar"
-            >
-              <IoIosArrowDroprightCircle size={34}/>
-            </button>
-          )}
+    <section
+      id="selected-list-section"
+      className="mt-10 rounded-[2rem] border border-zinc-700/50 bg-zinc-900/45 px-5 py-8 shadow-[0_24px_70px_-38px_rgba(0,0,0,0.8)] backdrop-blur-md sm:px-8 lg:px-10"
+    >
+      <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-amber-200/70">Tu Curatoria</p>
+          <h3 className="text-3xl font-semibold text-zinc-100">Lista seleccionada</h3>
         </div>
 
-   <div className='flex justify-center items-center'>
-         <button
-          onClick={onClear}
-          className="mb-4 px-4 py-2 bg-red-900 text-white rounded hover:bg-[#d52c39] transition"
-        >
-          Vaciar toda la lista
-        </button>
-   </div>
-
-        {items.length === 0 ? (
-          <p className="text-sm text-gray-300">No hay elementos seleccionados aún.</p>
-        ) : (
-          <div
-            className="grid gap-3"
-            style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(120px, 1fr))' }}
-          >
-            {items.map((item) => (
-              <div
-                key={item.id}
-                className="relative bg-[#1a1918] p-5 rounded-lg shadow-sm text-center"
-              >
-                <h5 className="text-xs font-medium min-h-[2rem] mb-1">
-                  {item.title || item.name}
-                </h5>
-
-                {item.poster_path && (
-                  <img
-                    src={`https://image.tmdb.org/t/p/w200${item.poster_path}`}
-                    alt={item.title || item.name}
-                    className="w-full rounded-md"
-                  />
-                )}
-
-                <button
-                  onClick={() => onRemove(item.id)}
-                  title="Eliminar de la lista"
-                  className="absolute top-0 right-0 w-5 h-5 flex items-center justify-center text-white font-bold bg-slate-200/30 rounded-full hover:bg-[#ff4c4c] transition text-sm"
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-        )}
-
-        {items.length > 0 && (
+        <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => {
-              onPickRandom();
-              if (isMobile) setIsOpen(false);
-            }}
-            className="mt-6 w-full px-4 py-2 bg-neutral-900/70 hover:bg-neutral-700/70 text-white rounded-lg flex justify-center items-center gap-4 transition"
+            onClick={onClear}
+            disabled={items.length === 0}
+            className="inline-flex items-center gap-2 rounded-xl border border-rose-400/30 bg-rose-900/30 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-900/45 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <FaDiceFive/> Randomize ({items.length})
+            <FaTrash />
+            Vaciar
           </button>
-        )}
+
+          <button
+            onClick={onPickRandom}
+            disabled={items.length === 0}
+            className="inline-flex items-center gap-2 rounded-xl border border-amber-300/35 bg-[#3f2618] px-4 py-2 text-sm font-semibold text-amber-100 transition hover:bg-[#5a3320] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            <FaDiceFive />
+            Sortear
+          </button>
+        </div>
       </div>
-    </>
+
+      {items.length === 0 ? (
+        <p className="rounded-xl border border-zinc-700/60 bg-zinc-900/70 p-4 text-sm text-zinc-400">
+          Aun no agregaste peliculas o series. Selecciona titulos en la cartelera para construir tu shortlist.
+        </p>
+      ) : (
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6">
+          {items.map((item) => (
+            <article
+              key={item.id}
+              className="relative overflow-hidden rounded-xl border border-zinc-700/70 bg-zinc-900/80"
+            >
+              {item.poster_path ? (
+                <img
+                  src={`https://image.tmdb.org/t/p/w300${item.poster_path}`}
+                  alt={item.title || item.name}
+                  className="h-48 w-full object-cover"
+                />
+              ) : (
+                <div className="flex h-48 items-center justify-center text-xs text-zinc-500">
+                  Sin poster
+                </div>
+              )}
+
+              <div className="p-3">
+                <h4 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold text-zinc-100">
+                  {item.title || item.name}
+                </h4>
+              </div>
+
+              <button
+                onClick={() => onRemove(item.id)}
+                title="Quitar de la lista"
+                className="absolute right-2 top-2 inline-flex h-7 w-7 items-center justify-center rounded-full border border-zinc-600/70 bg-black/70 text-xs text-zinc-100 transition hover:border-rose-300/50 hover:text-rose-200"
+              >
+                <FaXmark />
+              </button>
+            </article>
+          ))}
+        </div>
+      )}
+    </section>
   );
 }

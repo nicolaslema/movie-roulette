@@ -5,87 +5,56 @@ import SearchBar from '../SearchBar/SearchBar';
 import GenreSelector from '../GenreSelector/GenreSelector';
 import DatePicker from '../DatePicker/DatePicker';
 import type { ReturnTypeOfUseNetflixBrowserState } from '../../hooks/useNetflixBrowserState';
-import FilmStripByGenre from '../animatedVisuals/FilmStripMotion';
-import { useMemo } from 'react';
-
-
-
 
 type Props = {
   state: ReturnTypeOfUseNetflixBrowserState;
 };
 
 export default function HeaderControls({ state }: Props) {
-const defaultSelection = useMemo(() => {
-  const shuffled = [...state.contentList].sort(() => Math.random() - 0.5);
-  return shuffled.slice(0, 20);
-}, [state.contentList]);
-
-const filteredByGenre = useMemo(() => {
-  if (!state.selectedGenre) return defaultSelection;
-
-  return state.contentList
-    .filter((movie) => movie.genre_ids?.includes(state.selectedGenre))
-    .filter((movie) => movie.release_date)
-    .sort((a, b) => new Date(b.release_date).getTime() - new Date(a.release_date).getTime())
-    .slice(0, 10);
-}, [state.selectedGenre, state.contentList, defaultSelection]);
-
-
   return (
-    <div className="w-full mb-10 rounded-xl mt-16 bg-gradient-to-br from-zinc-900/30 via-zinc-950/30 to-zinc-900/30 border border-zinc-700/40 shadow-lg px-6 py-8">
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* 🧭 Columna izquierda: controles */}
-        <div className="flex flex-col gap-6">
-          {/* Tipo de contenido */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-zinc-300 uppercase tracking-wide">
-              Tipo:
-            </div>
-            <div className="flex gap-3 flex-wrap">
-              <button
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
-                  state.isTV
-                    ? 'bg-neutral-800/80 hover:bg-neutral-900/90 text-white border border-zinc-500/30'
-                    : 'bg-neutral-900/80 opacity-60 cursor-not-allowed text-zinc-400'
-                }`}
-                onClick={() => state.handleTypeChange('movie')}
-                disabled={!state.isTV}
-              >
-                <FaFilm className="text-red-400" />
-                Películas
-              </button>
+    <div className="relative z-[260] mt-10 rounded-3xl border border-zinc-700/50 bg-black/35 p-5 shadow-[0_18px_45px_-28px_rgba(0,0,0,0.7)] sm:p-6">
+      <div className="mb-5 flex flex-wrap gap-3">
+        <button
+          className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${
+            !state.isTV
+              ? 'border border-amber-300/45 bg-[#432716] text-amber-100 shadow-md'
+              : 'border border-zinc-600/70 bg-zinc-900 text-zinc-300 hover:bg-zinc-800'
+          }`}
+          onClick={() => state.handleTypeChange('movie')}
+          disabled={!state.isTV}
+        >
+          <FaFilm />
+          Peliculas
+        </button>
 
-              <button
-                className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition ${
-                  state.isTV
-                    ? 'bg-gray-800/80 opacity-60 cursor-not-allowed text-zinc-400'
-                    : 'bg-neutral-900/80 hover:bg-neutral-800/80 text-white border border-zinc-500/30'
-                }`}
-                onClick={() => state.handleTypeChange('tv')}
-                disabled={state.isTV}
-              >
-                <FaTv className="text-blue-400" />
-                Series
-              </button>
-            </div>
-          </div>
-                  {/* Search */}
-          <div className="w-full">
-            <SearchBar
-              query={state.searchQuery}
-              onChange={state.setSearchQuery}
-              onSubmit={state.handleSearch}
-            />
-          </div>
+        <button
+          className={`flex items-center gap-2 rounded-full px-5 py-2 text-sm font-semibold transition ${
+            state.isTV
+              ? 'border border-amber-300/45 bg-[#432716] text-amber-100 shadow-md'
+              : 'border border-zinc-600/70 bg-zinc-900 text-zinc-300 hover:bg-zinc-800'
+          }`}
+          onClick={() => state.handleTypeChange('tv')}
+          disabled={state.isTV}
+        >
+          <FaTv />
+          Series
+        </button>
+      </div>
 
-          {/* Género */}
+      <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
+        <div className="space-y-5">
+          <SearchBar
+            query={state.searchQuery}
+            onChange={state.setSearchQuery}
+            onSubmit={state.handleSearch}
+          />
+
           {!state.searchQuery && (
-            <div className="flex flex-col gap-2">
-              <div className="flex items-center gap-2 text-sm font-semibold text-zinc-300 uppercase tracking-wide">
-                <MdFilterList className="text-green-400" />
-                Género:
-              </div>
+            <div>
+              <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
+                <MdFilterList />
+                Genero
+              </p>
               <GenreSelector
                 genres={state.genres}
                 selectedGenre={state.selectedGenre}
@@ -93,47 +62,32 @@ const filteredByGenre = useMemo(() => {
               />
             </div>
           )}
-
-          {/* Fecha */}
-          <div className="flex flex-col gap-2">
-            <div className="flex items-center gap-2 text-sm font-semibold text-zinc-300 uppercase tracking-wide">
-              <MdFilterList className="text-yellow-400" />
-              Fecha:
-            </div>
-            <div className="flex gap-4 flex-wrap items-end">
-              <DatePicker
-                label="Desde"
-                value={state.releaseDateFrom}
-                onChange={state.setReleaseDateFrom}
-              />
-              <DatePicker
-                label="Hasta"
-                value={state.releaseDateTo}
-                onChange={state.setReleaseDateTo}
-              />
-              <button
-                onClick={state.clearDateFilters}
-                className="bg-red-700/30 hover:bg-red-800/30 text-white text-sm px-6 py-3 rounded-md border border-red-500/30 transition flex items-center gap-2"
-              >
-                <BiReset />
-                Reset fechas
-              </button>
-            </div>
-          </div>
-
-  
         </div>
 
-        {/* 🎨 Columna derecha: espacio visual */}
-        <div className="flex items-center justify-center min-h-[280px] border border-zinc-700/30 rounded-xl bg-gradient-to-br from-neutral-900/40 to-neutral-800/30 text-zinc-500 text-sm italic">
-          {/* Aquí podés insertar shaders, animaciones, previews, etc. */}
-   {filteredByGenre.length > 0 ? (
-    <FilmStripByGenre movies={filteredByGenre} />
-  ) : (
-    <div className="text-zinc-500 italic text-sm">No hay películas disponibles</div>
-  )}
-
-
+        <div>
+          <p className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-zinc-400">
+            <MdFilterList />
+            Ventana temporal
+          </p>
+          <div className="flex flex-wrap items-end gap-3">
+            <DatePicker
+              label="Desde"
+              value={state.releaseDateFrom}
+              onChange={state.setReleaseDateFrom}
+            />
+            <DatePicker
+              label="Hasta"
+              value={state.releaseDateTo}
+              onChange={state.setReleaseDateTo}
+            />
+            <button
+              onClick={state.clearDateFilters}
+              className="flex items-center gap-2 rounded-xl border border-rose-400/30 bg-rose-950/35 px-4 py-2 text-sm font-medium text-rose-200 transition hover:bg-rose-900/50"
+            >
+              <BiReset />
+              Limpiar fechas
+            </button>
+          </div>
         </div>
       </div>
     </div>

@@ -1,92 +1,123 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FaPlus, FaMinus, FaInfoCircle } from 'react-icons/fa';
+import { FaPlus, FaMinus, FaInfoCircle, FaStar } from 'react-icons/fa';
 import type { MovieOrSeries } from '../../types/MovieTypes';
-import MovieDetailModal from '../MovieDetailModal/MovieDetailModal';
-
+import DetailsModal from '../MovieDetails/DetailsModal';
 
 type Props = {
   items: MovieOrSeries[];
   selectedItems: MovieOrSeries[];
   toggleSelection: (item: MovieOrSeries) => void;
+  isFetchingMore?: boolean;
 };
 
-export default function ContentGrid({ items, selectedItems, toggleSelection }: Props) {
+export default function ContentGrid({
+  items,
+  selectedItems,
+  toggleSelection,
+  isFetchingMore = false,
+}: Props) {
   const [selectedDetail, setSelectedDetail] = useState<MovieOrSeries | null>(null);
 
   return (
-    <div className="relative mt-8">
-      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-5 gap-6 ">
+    <div className="relative mt-3">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {items.length === 0 ? (
-          <p className="text-center text-gray-400 col-span-full"></p>
+          <p className="col-span-full rounded-2xl border border-dashed border-zinc-600 bg-zinc-900/70 p-10 text-center text-zinc-400">
+            No hay resultados para los filtros actuales.
+          </p>
         ) : (
           items.map((item, index) => {
             const isSelected = selectedItems.some((i) => i.id === item.id);
 
             return (
-            <motion.div
-  key={`${item.id}-${index}`}
-  initial={{ opacity: 0, scale: 0.7 }}
-  animate={{ opacity: 1, scale: 1 }}
-  whileHover={{  }}
-  transition={{ duration: 0.3 }}
-  className={`relative rounded-xl overflow-hidden shadow-2xl transform-gpu min-h-[420px] group hover:shadow-neutral-200/10 ${
-    isSelected ? 'border-2 shadow-neutral-100/10 border-neutral-100/30 ' : 'border border-neutral-700/30'
-  }`}
->
-  {/* Fondo con imagen */}
-  {item.poster_path && (
-    <img
-      src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-      alt={item.title || item.name}
-      className="absolute inset-0 w-full h-full object-cover"
-    />
-  )}
-  {/* Degradado superior + título */}
-<div className="absolute top-0 left-0 w-full h-1/2 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10 bg-gradient-to-b from-black via-black/20 to-transparent px-4 pt-4 flex items-start">
-  <h4 className="text-white text-xl font-semibold drop-shadow-md truncate mt-8">
-    {item.title || item.name}
-  </h4>
-</div>
+              <motion.article
+                key={`${item.id}-${index}`}
+                initial={{ opacity: 0, y: 22 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ y: -6 }}
+                transition={{ duration: 0.4, ease: 'easeOut' }}
+                className={`group overflow-hidden rounded-3xl border bg-zinc-900/85 shadow-[0_14px_35px_-22px_rgba(0,0,0,0.9)] ${
+                  isSelected
+                    ? 'border-amber-300/50 ring-2 ring-amber-300/35'
+                    : 'border-zinc-700/70'
+                }`}
+              >
+                <div className="relative aspect-[3/4] overflow-hidden">
+                  {item.poster_path ? (
+                    <img
+                      src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                      alt={item.title || item.name}
+                      className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                    />
+                  ) : (
+                    <div className="flex h-full items-center justify-center bg-zinc-800 text-sm text-zinc-400">
+                      Sin poster
+                    </div>
+                  )}
+                  <div className="absolute left-3 top-3 rounded-full border border-zinc-700/80 bg-black/70 px-2 py-1 text-xs font-semibold text-zinc-100 shadow-sm">
+                    <span className="inline-flex items-center gap-1">
+                      <FaStar className="text-amber-400" />
+                      {(item.vote_average ?? 0).toFixed(1)}
+                    </span>
+                  </div>
+                </div>
 
+                <div className="space-y-3 p-3">
+                  <h4 className="line-clamp-2 min-h-[3rem] text-sm font-semibold text-zinc-100">
+                    {item.title || item.name}
+                  </h4>
 
-  {/* Título al hacer hover */}
+                  <div className="grid gap-2">
+                    <motion.button
+                      onClick={() => toggleSelection(item)}
+                      whileTap={{ scale: 0.96 }}
+                      className={`flex w-full items-center justify-center gap-2 rounded-xl px-3 py-2 text-sm font-medium transition ${
+                        isSelected
+                          ? 'bg-[#513126] text-amber-100 hover:bg-[#6c3f31]'
+                          : 'bg-zinc-800 text-zinc-200 hover:bg-zinc-700'
+                      }`}
+                    >
+                      {isSelected ? <FaMinus /> : <FaPlus />}
+                      {isSelected ? 'Quitar' : 'Guardar'}
+                    </motion.button>
 
-
-
-  {/* Degradado + botones */}
-  <div className="absolute bottom-0 left-0 w-full h-2/3 bg-gradient-to-t from-black from-20% via-black/60 to-transparent px-4 py-4 flex flex-col gap-2 justify-end">
-    <motion.button
-      onClick={() => toggleSelection(item)}
-      whileTap={{ scale: 0.95 }}
-      className={`flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition ${
-        isSelected
-          ? 'bg-red-500/30 hover:bg-red-700/30 text-white'
-          : 'bg-neutral-900/30 hover:bg-neutral-700/60 text-white'
-      }`}
-    >
-      {isSelected ? <FaMinus /> : <FaPlus />}
-      {isSelected ? 'Quitar de la lista' : 'Agregar a mi lista'}
-    </motion.button>
-
-    <motion.button
-      onClick={() => setSelectedDetail(item)}
-      whileTap={{ scale: 0.95 }}
-      className="flex items-center justify-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-neutral-400/30 hover:bg-neutral-100/30 text-white transition"
-    >
-      <FaInfoCircle />
-      Ver detalles
-    </motion.button>
-  </div>
-</motion.div>
-
+                    <motion.button
+                      onClick={() => setSelectedDetail(item)}
+                      whileTap={{ scale: 0.96 }}
+                      className="flex w-full items-center justify-center gap-2 rounded-xl border border-zinc-600/70 bg-black/40 px-3 py-2 text-sm font-medium text-zinc-100 transition hover:border-amber-300/35 hover:text-amber-200"
+                    >
+                      <FaInfoCircle />
+                      Detalles
+                    </motion.button>
+                  </div>
+                </div>
+              </motion.article>
             );
           })
         )}
+
+        {isFetchingMore &&
+          Array.from({ length: 5 }).map((_, idx) => (
+            <motion.div
+              key={`loading-skeleton-${idx}`}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0.15, 0.6, 0.15] }}
+              transition={{ duration: 1.2, repeat: Infinity, delay: idx * 0.08 }}
+              className="overflow-hidden rounded-3xl border border-zinc-700/60 bg-zinc-900/70"
+            >
+              <div className="aspect-[3/4] bg-zinc-800/80" />
+              <div className="space-y-2 p-3">
+                <div className="h-4 w-4/5 rounded bg-zinc-700/70" />
+                <div className="h-4 w-3/5 rounded bg-zinc-700/60" />
+                <div className="mt-3 h-9 rounded-xl bg-zinc-800/80" />
+              </div>
+            </motion.div>
+          ))}
       </div>
 
       {selectedDetail && (
-        <MovieDetailModal item={selectedDetail} onClose={() => setSelectedDetail(null)} />
+        <DetailsModal item={selectedDetail} onClose={() => setSelectedDetail(null)} />
       )}
     </div>
   );

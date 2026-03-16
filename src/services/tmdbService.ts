@@ -1,6 +1,6 @@
 // src/services/tmdbService.ts
 
-import { type MovieOrSeries } from "../types/MovieTypes";
+import { type MovieOrSeries, type MovieOrSeriesDetails } from '../types/MovieTypes';
 
 const API_KEY = process.env.TMDB_API_KEY;
 const BASE_URL = 'https://api.themoviedb.org/3';
@@ -14,9 +14,16 @@ export const fetchGenres = async (type: 'movie' | 'tv') => {
   return data.genres;
 };
 
+function resolveMediaType(item: MovieOrSeries): 'movie' | 'tv' {
+  if (item.media_type === 'movie' || item.media_type === 'tv') return item.media_type;
+  if (item.first_air_date && !item.release_date) return 'tv';
+  if (item.name && !item.title) return 'tv';
+  return 'movie';
+}
+
 export async function getTrailerUrl(item: MovieOrSeries): Promise<string | null> {
-  const { id, media_type } = item;
-  const type = media_type || 'movie'; // fallback por si falta
+  const { id } = item;
+  const type = resolveMediaType(item);
 
   const res = await fetch(`https://api.themoviedb.org/3/${type}/${id}/videos?api_key=${API_KEY}`);
   const data = await res.json();
@@ -26,6 +33,22 @@ export async function getTrailerUrl(item: MovieOrSeries): Promise<string | null>
   );
 
   return trailer ? `https://www.youtube.com/embed/${trailer.key}` : null;
+}
+
+export async function fetchContentDetails(item: MovieOrSeries): Promise<MovieOrSeriesDetails> {
+  const type = resolveMediaType(item);
+  const detailUrl = `${BASE_URL}/${type}/${item.id}?api_key=${API_KEY}&language=${LANGUAGE}&append_to_response=videos`;
+  const response = await fetch(detailUrl);
+
+  if (!response.ok) {
+    throw new Error(`TMDB detail fetch failed (${response.status})`);
+  }
+
+  const data = await response.json();
+  return {
+    ...data,
+    media_type: type,
+  };
 }
 
 export const fetchContent = async (

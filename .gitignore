@@ -22,3 +22,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Agent metadata and local skills
+AGENTS.md
+.agents/
+skills-lock.json
